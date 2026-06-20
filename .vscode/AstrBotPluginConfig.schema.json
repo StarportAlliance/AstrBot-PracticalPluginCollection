@@ -1,16 +1,21 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://astrbot.app/schemas/plugin-conf-schema.json",
+    "title": "AstrBot Plugin Configuration Schema",
+    "description": "用于验证插件 _conf_schema.json 的 JSON Schema。（此配置由 DeepSeek v4 Pro 基于文档生成）",
     "type": "object",
     "additionalProperties": {
-        "$ref": "#/definitions/configItem"
+        "$ref": "#/$defs/configItem"
     },
-    "definitions": {
+    "$defs": {
         "configItem": {
             "type": "object",
+            "required": [
+                "type"
+            ],
             "properties": {
                 "type": {
-                    "type": "string",
-                    "description": "配置项的类型。\n当类型为 text 时，将会可视化为一个更大的可拖拽宽高的 textarea 组件，以适应大文本。",
+                    "description": "配置项类型（必填）",
                     "enum": [
                         "string",
                         "text",
@@ -25,43 +30,52 @@
                     ]
                 },
                 "description": {
-                    "type": "string",
-                    "description": "配置项的显示名称。"
+                    "description": "配置项的描述",
+                    "type": "string"
                 },
                 "hint": {
-                    "type": "string",
-                    "description": "配置项的描述信息，显示在显示名称下方。"
+                    "description": "配置项的提示信息，悬浮在问号按钮上显示",
+                    "type": "string"
                 },
                 "obvious_hint": {
+                    "description": "hint 是否醒目显示",
                     "type": "boolean",
-                    "description": "配置项的描述是否要醒目显示（其实就是描述开始前添加 Emoji 感叹号）。",
                     "default": false
                 },
+                "default": {
+                    "description": "配置项的默认值，类型取决于 type 字段"
+                },
                 "invisible": {
+                    "description": "是否在管理面板中隐藏",
                     "type": "boolean",
-                    "description": "配置项是否隐藏。\n如果设置为 true，则不会在 WebUI 上显示。\n用户仍可在数据目录中修改选项值。",
                     "default": false
                 },
                 "options": {
+                    "description": "下拉列表可选项",
                     "type": "array",
-                    "description": "配置指定的选项列表。\n若配置此项，将显示一个下拉菜单并替代掉原先的输入框。",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "labels": {
+                    "description": "下拉选项的国际化标签，与 options 一一对应",
+                    "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "editor_mode": {
+                    "description": "是否启用代码编辑器模式（v3.5.10+）",
                     "type": "boolean",
-                    "description": "[Added in v3.5.10]\n是否启用代码编辑器模式。",
                     "default": false
                 },
                 "editor_language": {
+                    "description": "代码编辑器的语言模式",
                     "type": "string",
-                    "description": "代码编辑器的代码语言。",
                     "default": "json"
                 },
                 "editor_theme": {
-                    "type": "string",
-                    "description": "代码编辑器的主题。",
+                    "description": "代码编辑器主题",
                     "enum": [
                         "vs-light",
                         "vs-dark"
@@ -69,66 +83,50 @@
                     "default": "vs-light"
                 },
                 "_special": {
-                    "type": "string",
-                    "description": "[Added in v4.0.0]\n用于调用 AstrBot 提供的可视化提供商选取、人格选取、知识库选取等功能。",
-                    "enum": [
-                        "select_provider",
-                        "select_provider_tts",
-                        "select_provider_stt",
-                        "select_persona"
-                    ]
-                },
-                "default": {
-                    "description": "配置项的默认值。\n如果用户没有配置，将使用默认值。\nint 是 0，float 是 0.0，bool 是 False，string 是 \"\"，object 是 {}，list 是 []。"
+                    "description": "调用 AstrBot 内置的可视化选取功能（v4.0.0+）",
+                    "type": "string"
                 },
                 "items": {
-                    "type": "object",
-                    "description": "如果配置的类型是 object，需要添加 items 字段。\nitems 的内容是这个配置项的子 Schema。\n理论上可以无限嵌套，但是不建议过多嵌套。"
+                    "description": "当 type 为 object 时的子 Schema；当 type 为 list 时指定元素类型",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/objectItems"
+                        },
+                        {
+                            "$ref": "#/$defs/listItems"
+                        }
+                    ]
                 },
                 "file_types": {
+                    "description": "file 类型允许上传的文件扩展名列表",
                     "type": "array",
-                    "description": "允许上传的文件类型列表，如 [\"pdf\", \"docx\"]。",
                     "items": {
                         "type": "string"
                     }
                 },
                 "templates": {
+                    "description": "template_list 类型的模板定义（必填）",
                     "type": "object",
-                    "description": "模板定义。",
                     "additionalProperties": {
-                        "$ref": "#/definitions/templateDefinition"
+                        "$ref": "#/$defs/templateDefinition"
                     }
                 },
                 "template_schema": {
+                    "description": "dict 类型的快捷编辑模板",
                     "type": "object",
-                    "description": "模板 schema，当设置之后，用户可以透过 WebUI 快速编辑模板。",
                     "additionalProperties": {
-                        "$ref": "#/definitions/templateItem"
+                        "$ref": "#/$defs/templateSchemaItem"
                     }
                 },
                 "slider": {
-                    "type": "object",
-                    "description": "滑块配置。\n若配置此项，将配置项输入框旁显示一个滑块控件。",
-                    "properties": {
-                        "min": {
-                            "type": "number",
-                            "description": "最小值"
-                        },
-                        "max": {
-                            "type": "number",
-                            "description": "最大值"
-                        },
-                        "step": {
-                            "type": "number",
-                            "description": "步长"
-                        }
-                    },
-                    "additionalProperties": false
+                    "description": "滑块控件配置（用于 int/float 类型）",
+                    "$ref": "#/$defs/sliderConfig"
+                },
+                "name": {
+                    "description": "配置项的显示名称（用于 template_schema 或模板 items）",
+                    "type": "string"
                 }
             },
-            "required": [
-                "type"
-            ],
             "allOf": [
                 {
                     "if": {
@@ -144,54 +142,7 @@
                         ],
                         "properties": {
                             "items": {
-                                "type": "object",
-                                "additionalProperties": {
-                                    "$ref": "#/definitions/configItem"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "file"
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "file_types": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "dict"
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "items": {
-                                "type": "object",
-                                "additionalProperties": {
-                                    "$ref": "#/definitions/configItem"
-                                }
-                            },
-                            "template_schema": {
-                                "type": "object",
-                                "additionalProperties": {
-                                    "$ref": "#/definitions/templateItem"
-                                }
+                                "$ref": "#/$defs/objectItems"
                             }
                         }
                     }
@@ -207,313 +158,130 @@
                     "then": {
                         "required": [
                             "templates"
-                        ],
-                        "properties": {
-                            "templates": {
-                                "type": "object",
-                                "additionalProperties": {
-                                    "$ref": "#/definitions/templateDefinition"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "enum": [
-                                    "int",
-                                    "float"
-                                ]
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "slider": {
-                                "type": "object",
-                                "properties": {
-                                    "min": {
-                                        "type": "number"
-                                    },
-                                    "max": {
-                                        "type": "number"
-                                    },
-                                    "step": {
-                                        "type": "number"
-                                    }
-                                },
-                                "additionalProperties": false
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "enum": [
-                                    "string",
-                                    "text"
-                                ]
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "int"
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "integer"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "float"
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "number"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "const": "bool"
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "boolean"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "enum": [
-                                    "object",
-                                    "dict"
-                                ]
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "enum": [
-                                    "list",
-                                    "file",
-                                    "template_list"
-                                ]
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "default": {
-                                "type": "array"
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "enum": [
-                                        "object",
-                                        "dict"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "items": {
-                                "not": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "const": "dict"
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "template_schema": {
-                                "not": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "const": "template_list"
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "templates": {
-                                "not": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "enum": [
-                                        "int",
-                                        "float"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "slider": {
-                                "not": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "const": "file"
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "file_types": {
-                                "not": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "if": {
-                        "properties": {
-                            "type": {
-                                "not": {
-                                    "enum": [
-                                        "string",
-                                        "text"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "then": {
-                        "properties": {
-                            "render_type": {
-                                "not": {}
-                            }
-                        }
+                        ]
                     }
                 }
             ]
         },
-        "templateItem": {
-            "description": "模板项定义，用于 dict 类型的 template_schema。",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/configItem"
-                },
-                {
-                    "properties": {
-                        "name": {
-                            "type": "string",
-                            "description": "模板项的显示名称。"
-                        }
-                    }
-                }
-            ]
-        },
-        "templateDefinition": {
+        "objectItems": {
+            "description": "object 类型的子配置项定义",
             "type": "object",
-            "description": "模板定义，用于 template_list 类型的 templates 字段。",
+            "additionalProperties": {
+                "$ref": "#/$defs/configItem"
+            }
+        },
+        "listItems": {
+            "description": "list 类型的元素类型定义",
+            "type": "object",
             "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "模板的显示名称。"
-                },
-                "hint": {
-                    "type": "string",
-                    "description": "模板的提示信息。"
-                },
-                "items": {
-                    "type": "object",
-                    "description": "模板的子配置项 Schema。",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/configItem"
-                    }
+                "type": {
+                    "description": "列表元素类型",
+                    "enum": [
+                        "string",
+                        "text",
+                        "int",
+                        "float",
+                        "bool"
+                    ]
                 }
             },
             "required": [
+                "type"
+            ]
+        },
+        "templateDefinition": {
+            "description": "template_list 中单个模板的定义",
+            "type": "object",
+            "required": [
                 "name",
                 "items"
-            ]
+            ],
+            "properties": {
+                "name": {
+                    "description": "模板显示名称",
+                    "type": "string"
+                },
+                "hint": {
+                    "description": "模板提示信息",
+                    "type": "string"
+                },
+                "display_item": {
+                    "description": "在折叠列表中显示的字段 key（支持点号路径）",
+                    "type": "string"
+                },
+                "hide_hint_in_list": {
+                    "description": "在折叠列表中隐藏模板 hint",
+                    "type": "boolean",
+                    "default": false
+                },
+                "items": {
+                    "description": "模板内的配置项",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/configItem"
+                    }
+                }
+            }
+        },
+        "templateSchemaItem": {
+            "description": "dict template_schema 中的单个条目",
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "name": {
+                    "description": "显示名称",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "hint": {
+                    "description": "提示信息",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "类型",
+                    "enum": [
+                        "string",
+                        "text",
+                        "int",
+                        "float",
+                        "bool"
+                    ]
+                },
+                "default": {
+                    "description": "默认值"
+                },
+                "slider": {
+                    "description": "滑块控件配置",
+                    "$ref": "#/$defs/sliderConfig"
+                }
+            }
+        },
+        "sliderConfig": {
+            "description": "滑块控件参数",
+            "type": "object",
+            "required": [
+                "min",
+                "max"
+            ],
+            "properties": {
+                "min": {
+                    "description": "最小值",
+                    "type": "number"
+                },
+                "max": {
+                    "description": "最大值",
+                    "type": "number"
+                },
+                "step": {
+                    "description": "步长",
+                    "type": "number"
+                }
+            }
         }
     }
 }
