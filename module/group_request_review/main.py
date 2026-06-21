@@ -104,18 +104,19 @@ async def handle_request_review(
             )
             return
     match = re.search(group_config["Regex"], input_answer)
-    if match:
-        logger.info(
-            f"用户 {user_id} 答案中匹配了关键词 {match.group()}，将同意其加入群 {group_id}。"
-        )
-        await _handle_request(event, request_flag, True)
-        return
-    else:
+    if not match:
         logger.info(f"用户 {user_id} 答案中未匹配到关键词，将拒绝其加群请求。")
         await _handle_request(
             event, request_flag, False, message_template["RejectByRegex"]
         )
         return
+
+    # 检查全部通过，同意加群请求
+    logger.info(
+        f"用户 {user_id} 答案中匹配了关键词 {match.group()}，将同意其加入群 {group_id}。"
+    )
+    await _handle_request(event, request_flag, True)
+    return
 
 
 async def _handle_request(
