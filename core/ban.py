@@ -51,6 +51,7 @@ class BanSystem:
                 """)
                 await db.execute("""
                     CREATE TABLE IF NOT EXISTS action_log (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
                         action TEXT NOT NULL,
                         user_id TEXT NOT NULL,
                         operator TEXT NOT NULL,
