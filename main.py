@@ -19,6 +19,12 @@ class PracticalPluginCollection(Star):
         self.plugin_data_path = StarTools.get_data_dir()
         """插件数据目录。"""
 
+    # 这是一个 TODO，计划中会使用该方法去创建定时任务。
+    # 限定 on_platform_loaded 后再创建是为了利用该 Hook 拿到 CQHTTP 平台客户端实例
+    # @filter.on_platform_loaded()
+    # async def scheduled_task(self, event: AstrMessageEvent):
+    #     """定时任务启动器。"""
+
     async def initialize(self):
         """初始化插件。"""
         if not self.config["GlobalEnable"]:
