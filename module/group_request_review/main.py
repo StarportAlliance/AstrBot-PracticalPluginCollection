@@ -1,5 +1,3 @@
-"""加群请求自动审核模块，提供了基于正则表达式的加群自动处理功能，能够通过正则判断入群答案从而自动同意/拒绝请求，支持等级/速率限制等筛选条件。"""
-
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent
 from typing import cast
