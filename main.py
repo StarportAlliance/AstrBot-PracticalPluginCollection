@@ -1,7 +1,7 @@
 from astrbot.api.star import Context, Star, StarTools
 from astrbot.api import logger, AstrBotConfig
 from astrbot.api.event import filter, AstrMessageEvent
-from .core import BanSystem
+from .core import BanSystem, EconomicSystem
 from .module import handle_request_review
 from .module.group_request_review.log import GroupRequestLog
 from typing import cast
@@ -33,6 +33,7 @@ class PracticalPluginCollection(Star):
             )
         else:
             self.ban_system = await BanSystem.init(self.plugin_data_path)
+            self.economic_system = await EconomicSystem.init(self.plugin_data_path)
             self.group_request_log = await GroupRequestLog.init(self.plugin_data_path)
             logger.info("插件初始化完成。")
 
