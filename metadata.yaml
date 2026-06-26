@@ -6,4 +6,4 @@ author: QingFeng
 repo: https://github.com/QingFeng-awa/astrbot_practical_plugin_collection
 support_platforms:
   - aiocqhttp
-astrbot_version: ">=4.17.6"
+astrbot_version: ">=4.17.6,<5"
