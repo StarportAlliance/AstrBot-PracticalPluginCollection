@@ -40,19 +40,6 @@ class PracticalPluginCollection(Star):
     async def terminate(self):
         logger.info("插件已终止。")
 
-    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @filter.event_message_type(filter.EventMessageType.ALL)
-    async def group_request_review(self, event: AstrMessageEvent):
-        """加群请求自动审核模块事件接收器。"""
-        if not self._event_filter(event, self.config["Whitelist"]):
-            return
-        await handle_request_review(
-            event,
-            self.module_config["GroupRequestReview"],
-            self.ban_system,
-            self.group_request_log,
-        )
-
     def _event_filter(self, event: AstrMessageEvent, whitelist_config: dict) -> bool:
         """事件过滤器。
 
@@ -85,3 +72,41 @@ class PracticalPluginCollection(Star):
                     f"判断事件类型 {request_type} 失败，这似乎不是 Onebot 11 的标准事件类型。请检查插件是否兼容当前 AstrBot / NapCat 版本。"
                 )
                 return False
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    async def group_request_review(self, event: AstrMessageEvent):
+        """加群请求自动审核模块事件接收器。"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
+        await handle_request_review(
+            event,
+            self.module_config["GroupRequestReview"],
+            self.ban_system,
+            self.group_request_log,
+        )
+
+    @filter.command_group("ban")
+    def ban(self):
+        """封禁系统功能命令组。"""
+
+    @ban.command("add")
+    async def add_ban(
+        self, event: AstrMessageEvent, user_id: int, reason: str = "", duration: int = 0
+    ):
+        """添加封禁。"""
+        try:
+            async for result in self.ban_system.add(event, user_id, reason, duration):
+                yield result
+        except Exception:
+            logger.exception(
+                f"处理命令 `/ban add {user_id} {reason} {duration}` 时发生错误。"
+            )
+
+    @ban.command("remove")
+    async def remove_ban(self, event: AstrMessageEvent, user_id: int):
+        """解封给定用户。"""
+        try:
+            async for result in self.ban_system.remove(event, user_id):
+                yield result
+        except Exception:
+            logger.exception(f"处理命令 `/ban remove {user_id}` 时发生错误。")

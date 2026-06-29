@@ -4,26 +4,26 @@ import aiosqlite
 from datetime import datetime
 
 
-class BanSystem:
-    """封禁系统。"""
+class BanSystemDataBase:
+    """封禁系统数据库相关操作。"""
 
     db_path = None
     """数据库文件路径。"""
 
     def __init__(self, plugin_data_path: Path):
-        """**请使用 BanSystem.init 方法初始化封禁系统。**"""
+        """**请使用 BanSystemDataBase.init 方法初始化封禁系统数据库。**"""
         self.plugin_data_path = plugin_data_path
         self.db_path = self.plugin_data_path / "core" / "ban.db"
 
     @classmethod
     async def init(cls, plugin_data_path: Path):
-        """初始化封禁系统。
+        """初始化封禁系统数据库。
 
         Args:
             plugin_data_path (Path): 插件数据目录。
 
         Returns:
-            BanSystem: 封禁系统实例。若初始化失败则返回 None。
+            BanSystemDataBase: 封禁系统数据库实例。若初始化失败则返回 None。
         """
         try:
             ban_system = cls(plugin_data_path)
