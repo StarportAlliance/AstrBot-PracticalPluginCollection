@@ -9,7 +9,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 
 | 类别       | 技术                            | 说明                                                    |
 | ---------- | ------------------------------- | ------------------------------------------------------- |
-| 编程语言   | Python == 3.12                  | 使用固定 Python 版本，且无需考虑旧版兼容                |
+| 编程语言   | Python ~= 3.12.0                | 使用 Python 3.12，且无需考虑旧版兼容                    |
 | 机器人框架 | AstrBot >= 4.17.6               | 基于 `Star` 类开发的一体化聊天机器人插件                |
 | 协议适配   | aiocqhttp（NapCat / OneBot 11） | 通过 NapCat 协议端与 QQ 交互                            |
 | 数据存储   | aiosqlite >= 0.22.1             | 用于核心与模块本地数据持久化                            |
