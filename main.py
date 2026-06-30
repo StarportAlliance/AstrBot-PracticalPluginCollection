@@ -5,8 +5,7 @@ from astrbot.api.event import AstrMessageEvent, filter
 from astrbot.api.star import Context, Star, StarTools
 
 from .core import BanSystem, EconomicSystem
-from .module import handle_request_review
-from .module.group_request_review.log import GroupRequestLog
+from .module import GroupRequestReview
 from .utils.message import MessageTemplate
 
 
@@ -38,7 +37,12 @@ class PracticalPluginCollection(Star):
             self.msg_template = MessageTemplate(self.config["MessageTemplate"])
             self.ban_system = BanSystem(self.config, self.msg_template)
             self.economic_system = await EconomicSystem.init(self.plugin_data_path)
-            self.group_request_log = await GroupRequestLog.init(self.plugin_data_path)
+            self.group_request_reviewer = await GroupRequestReview.init(
+                self.plugin_data_path,
+                self.msg_template,
+                self.module_config["GroupRequestReview"],
+                self.ban_system,
+            )
             logger.info("插件初始化完成。")
 
     async def terminate(self):
@@ -82,13 +86,7 @@ class PracticalPluginCollection(Star):
         """加群请求自动审核模块事件接收器。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        await handle_request_review(
-            event,
-            self.msg_template,
-            self.module_config["GroupRequestReview"],
-            self.ban_system,
-            self.group_request_log,
-        )
+        await self.group_request_reviewer.handle_request_review(event)
 
     @filter.command_group("ban")
     def ban(self):

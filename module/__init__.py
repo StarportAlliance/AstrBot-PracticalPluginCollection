@@ -1,3 +1,3 @@
-from .group_request_review.main import handle_request_review
+from .group_request_review.main import GroupRequestReview
 
-__all__ = ["handle_request_review"]
+__all__ = ["GroupRequestReview"]
