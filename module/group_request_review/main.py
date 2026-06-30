@@ -7,15 +7,19 @@ from ..utils import (
     ProtocolEndApi,
     check_self_role,
 )
+import math
 import re
 from datetime import datetime, timedelta
+from ...utils.message import MessageTemplate
+from .log import GroupRequestLog
 
 
 async def handle_request_review(
     event: AstrMessageEvent,
+    message_template: MessageTemplate,
     module_config: dict,
     ban_system: BanSystem,
-    group_request_log,
+    group_request_log: GroupRequestLog,
 ):
     """处理加群请求。"""
     # 基础事件筛选
@@ -53,18 +57,22 @@ async def handle_request_review(
         return
 
     # 主要判断逻辑部分
-    message_template = cast(dict, module_config["MessageTemplate"])
     if group_config["UseBanlist"]:
         if await ban_system.check_user_is_banned(user_id):
             logger.info(f"用户 {user_id} 已被封禁，将拒绝其加群请求。")
             await _handle_request(
-                event, request_flag, False, message_template["RejectByBanned"]
+                event,
+                request_flag,
+                False,
+                message_template.get_msg_template(
+                    "GroupRequestReview", "RejectByBanned"
+                ),
             )
             return
     time_limit = cast(dict, group_config["TimeLimit"])
     if time_limit["Enable"]:
-        statistical_time = time_limit["StatisticalTime"]
-        total_attempt = time_limit["TotalAttempt"]
+        statistical_time = int(time_limit["StatisticalTime"])
+        total_attempt = int(time_limit["TotalAttempt"])
         cutoff_time = (datetime.now() - timedelta(minutes=statistical_time)).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
@@ -75,8 +83,25 @@ async def handle_request_review(
             logger.info(
                 f"用户 {user_id} 在 {statistical_time} 分钟内请求 {len(recent_requests)} 次，超过上限 {total_attempt}，将拒绝其加群请求。"
             )
+            earliest_request_time = min(
+                datetime.strptime(req["request_time"], "%Y-%m-%d %H:%M:%S")
+                for req in recent_requests
+            )
+            remaining_delta = (
+                earliest_request_time
+                + timedelta(minutes=statistical_time)
+                - datetime.now()
+            )
+            remaining_time = math.ceil(remaining_delta.total_seconds() / 60)
             await _handle_request(
-                event, request_flag, False, message_template["RejectByRateLimit"]
+                event,
+                request_flag,
+                False,
+                message_template.get_msg_template(
+                    "GroupRequestReview",
+                    "RejectByRateLimit",
+                    remaining_time=str(remaining_time),
+                ),
             )
             return
         await group_request_log.add_request(user_id)
@@ -87,7 +112,12 @@ async def handle_request_review(
             if not level_limit["SkipInvalidLevel"]:
                 logger.info(f"用户 {user_id} 隐藏了 QQ 等级，将拒绝其加群请求。")
                 await _handle_request(
-                    event, request_flag, False, message_template["RejectByInvalidLevel"]
+                    event,
+                    request_flag,
+                    False,
+                    message_template.get_msg_template(
+                        "GroupRequestReview", "RejectByInvalidLevel"
+                    ),
                 )
                 return
             logger.debug(
@@ -98,14 +128,24 @@ async def handle_request_review(
                 f"用户 {user_id} 等级 {member_info['qqLevel']} 低于要求的最小等级 {level_limit['MinLevel']}，将拒绝其加群请求。"
             )
             await _handle_request(
-                event, request_flag, False, message_template["RejectByLevelLimit"]
+                event,
+                request_flag,
+                False,
+                message_template.get_msg_template(
+                    "GroupRequestReview",
+                    "RejectByLevelLimit",
+                    required_level=level_limit["MinLevel"],
+                ),
             )
             return
     match = re.search(group_config["Regex"], input_answer)
     if not match:
         logger.info(f"用户 {user_id} 答案中未匹配到关键词，将拒绝其加群请求。")
         await _handle_request(
-            event, request_flag, False, message_template["RejectByRegex"]
+            event,
+            request_flag,
+            False,
+            message_template.get_msg_template("GroupRequestReview", "RejectByRegex"),
         )
         return
 

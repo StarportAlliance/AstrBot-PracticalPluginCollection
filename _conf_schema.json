@@ -266,42 +266,6 @@
                                 }
                             }
                         }
-                    },
-                    "MessageTemplate": {
-                        "type": "object",
-                        "description": "消息模板",
-                        "items": {
-                            "RejectByBanned": {
-                                "type": "string",
-                                "description": "封禁账号拒绝时使用的理由",
-                                "hint": "当加群者处于封禁列表中时，将使用此理由拒绝其加群请求。",
-                                "default": "您已被封禁，无法加入群聊。"
-                            },
-                            "RejectByRateLimit": {
-                                "type": "string",
-                                "description": "速率限制拒绝时使用的理由",
-                                "hint": "当加群者触发速率限制时，将使用此理由拒绝其加群请求。可用占位符：{remaining_time}（频率限制剩余时间，单位为分钟，向上取整）。",
-                                "default": "您的加群请求过于频繁，请在 {remaining_time} 分钟后重试。"
-                            },
-                            "RejectByInvalidLevel": {
-                                "type": "string",
-                                "description": "无效等级拒绝时使用的理由",
-                                "hint": "当获取加群者等级失败且未选择跳过校验时，将使用此理由拒绝其加群请求。",
-                                "default": "获取你的 QQ 等级失败，请在设置内对外展示你的等级。"
-                            },
-                            "RejectByLevelLimit": {
-                                "type": "string",
-                                "description": "等级限制拒绝时使用的理由",
-                                "hint": "当加群者触发等级限制时，将使用此理由拒绝其加群请求。可用占位符：{required_level}（最低限制等级）。",
-                                "default": "您的等级低于 {required_level}，无法加入群聊。"
-                            },
-                            "RejectByRegex": {
-                                "type": "string",
-                                "description": "正则表达式拒绝时使用的理由",
-                                "hint": "当加群者填写答案未匹配正则表达式时，将使用此理由拒绝其加群请求。",
-                                "default": "您的答案不符合要求，请重新填写。"
-                            }
-                        }
                     }
                 }
             }
@@ -317,33 +281,69 @@
                 "items": {
                     "AddNewBan": {
                         "type": "string",
-                        "description": "添加新封禁用户成功时显示的信息，可用占位符有 {user_id}。",
+                        "description": "添加新封禁用户成功时显示的信息，可用占位符有 {user_id}（用户 ID）。",
                         "default": "封禁用户 {user_id} 成功。"
                     },
                     "DuplicateBan": {
                         "type": "string",
-                        "description": "添加已存在封禁用户时显示的信息，可用占位符有 {user_id}。",
+                        "description": "添加已存在封禁用户时显示的信息，可用占位符有 {user_id}（用户 ID）。",
                         "default": "用户 {user_id} 已被封禁，无需重复添加。"
                     },
                     "RemoveBan": {
                         "type": "string",
-                        "description": "移除封禁用户成功时显示的信息，可用占位符有 {user_id}。",
+                        "description": "移除封禁用户成功时显示的信息，可用占位符有 {user_id}（用户 ID）。",
                         "default": "移除封禁用户 {user_id} 成功。"
                     },
                     "ListBan": {
                         "type": "string",
-                        "description": "列出封禁用户列表时显示的信息，可用占位符有 {banlist}。",
+                        "description": "列出封禁用户列表时显示的信息，可用占位符有 {banlist}（封禁用户列表）。",
                         "default": "当前封禁用户列表：{banlist}"
                     },
                     "BanlistFormat": {
                         "type": "string",
-                        "description": "每行封禁用户列表的显示格式，可用占位符有 {user_id}, {reason}。",
+                        "description": "每行封禁用户列表的显示格式，可用占位符有 {user_id}（用户 ID）, {reason}（封禁原因）。",
                         "default": "\n- 用户 ID：{user_id}，封禁理由：{reason}。"
                     },
                     "BanlistEmpty": {
                         "type": "string",
                         "description": "当没有任何人被封禁时显示的信息。",
                         "default": "当前封禁列表为空。"
+                    }
+                }
+            },
+            "GroupRequestReview": {
+                "type": "object",
+                "description": "加群请求审核",
+                "items": {
+                    "RejectByBanned": {
+                        "type": "string",
+                        "description": "封禁账号拒绝时使用的理由",
+                        "hint": "当加群者处于封禁列表中时，将使用此理由拒绝其加群请求。",
+                        "default": "您已被封禁，无法加入群聊。"
+                    },
+                    "RejectByRateLimit": {
+                        "type": "string",
+                        "description": "速率限制拒绝时使用的理由",
+                        "hint": "当加群者触发速率限制时，将使用此理由拒绝其加群请求。可用占位符有 {remaining_time}（频率限制剩余时间，单位为分钟，向上取整）。",
+                        "default": "您的加群请求过于频繁，请在 {remaining_time} 分钟后重试。"
+                    },
+                    "RejectByInvalidLevel": {
+                        "type": "string",
+                        "description": "无效等级拒绝时使用的理由",
+                        "hint": "当获取加群者等级失败且未选择跳过校验时，将使用此理由拒绝其加群请求。",
+                        "default": "获取你的 QQ 等级失败，请在设置内对外展示你的等级。"
+                    },
+                    "RejectByLevelLimit": {
+                        "type": "string",
+                        "description": "等级限制拒绝时使用的理由",
+                        "hint": "当加群者触发等级限制时，将使用此理由拒绝其加群请求。可用占位符有 {required_level}（最低限制等级）。",
+                        "default": "您的等级低于 {required_level}，无法加入群聊。"
+                    },
+                    "RejectByRegex": {
+                        "type": "string",
+                        "description": "正则表达式拒绝时使用的理由",
+                        "hint": "当加群者填写答案未匹配正则表达式时，将使用此理由拒绝其加群请求。",
+                        "default": "您的答案不符合要求，请重新填写。"
                     }
                 }
             }

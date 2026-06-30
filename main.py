@@ -82,6 +82,7 @@ class PracticalPluginCollection(Star):
             return
         await handle_request_review(
             event,
+            self.msg_template,
             self.module_config["GroupRequestReview"],
             self.ban_system,
             self.group_request_log,
