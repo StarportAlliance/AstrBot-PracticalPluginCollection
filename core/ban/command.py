@@ -60,7 +60,6 @@ class BanSystem(BanSystemCore):
 
         Args:
             event (AstrMessageEvent): 消息事件对象。
-            config (AstrBotConfig): 插件配置对象。
             user_id (str): 用户 ID。
 
         Returns:
