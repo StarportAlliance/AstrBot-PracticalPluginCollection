@@ -22,7 +22,33 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 
 - CodeGraph 是一个预构建的知识图谱，包含代码库中每个符号、调用边和依赖关系。你应在开始任务前先调用 CodeGraph 工具（`codegraph_explore`）以获取项目的知识图谱，尽量避免通过文件搜索来获取代码信息。
   - 如果你没有相关工具可调用，请先用文件搜索方式获取代码信息，在完成任务时明确告知用户 CodeGraph 工具不可用，并引导用户前往 https://github.com/colbymchenry/codegraph 安装 CodeGraph。
+- 所有函数均应包含文档注释，使用 Google Python 注释规范。但位于根目录的 `main.py` 为例外，该文件不需要必须遵守本条规则。
+  - `Args`、`Yields`、`Returns` 字段若存在对应参数则必须包含，否则可省略。
+  - 若需使用特殊方法调用方法，则必须包含 `Examples` 字段用以演示。
+  - `Raises` 字段若主动引发了相关异常则必须包含，可能由用户输入传参不当极易高发的异常也应当说明，否则可省略。
+  - 不应包含 `Notes` 字段，有需要请写在描述部分内。
+
+### 命令/事件处理
+
+我们将一个功能分为 3 个部分：
+
+#### 入口 handler（第一层/顶层）
+
+插件 Event Listener 与 Command Handler 的定义位置，（受限于 AstrBot 框架的限制）位于根目录的 `main.py` 文件中。\
+该层仅作薄包装，不含任何实际逻辑，此处应当直接转发至下一层的 handler。\
+此部分不应含任何日志输出。
+
+#### 主业务逻辑（第二层/中层）
+
+对应功能的核心业务代码逻辑，分布于各个核心/模块中。\
+功能的核心逻辑均在此处实现。
+
+#### 底层接口（第三层/底层）
+
+底层接口实现，应当是通用的，仅当该功能会被多个模块调用时才应当将其从中层提取出来。\
+此部分不应含任何日志输出。
 
 ## 开发提示
 
 - 项目虽已安装 Ruff，但并非必须要在完成任务后跑一遍 Ruff check。除非用户主动要求，一般情况下你可以偷懒不 Check。
+- 如果需要，可以翻阅 `.venv\Lib\site-packages\astrbot\` 下文件了解 AstrBot 源码中的相关实现。
