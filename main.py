@@ -37,7 +37,7 @@ class PracticalPluginCollection(Star):
             self.msg_template = MessageTemplate(self.config["MessageTemplate"])
             self.ban_system = BanSystem(self.config, self.msg_template)
             self.economic_system = await EconomicSystem.init(self.plugin_data_path)
-            self.group_request_reviewer = await GroupRequestReview.init(
+            self.group_request_reviewer = await GroupRequestReview.initialize(
                 self.plugin_data_path,
                 self.msg_template,
                 self.module_config["GroupRequestReview"],
@@ -95,23 +95,14 @@ class PracticalPluginCollection(Star):
     @ban.command("add")
     async def add_ban(self, event: AstrMessageEvent, user_id: str, reason: str = ""):
         """新增封禁用户。"""
-        try:
-            yield self.ban_system.add(event, user_id, reason)
-        except Exception:
-            logger.exception(f"处理命令 `/ban add {user_id} {reason}` 时发生错误。")
+        yield self.ban_system.add(event, user_id, reason)
 
     @ban.command("remove")
     async def remove_ban(self, event: AstrMessageEvent, user_id: str):
         """解封给定用户。"""
-        try:
-            yield self.ban_system.remove(event, user_id)
-        except Exception:
-            logger.exception(f"处理命令 `/ban remove {user_id}` 时发生错误。")
+        yield self.ban_system.remove(event, user_id)
 
     @ban.command("list")
     async def list_ban(self, event: AstrMessageEvent):
         """列出所有封禁用户。"""
-        try:
-            yield self.ban_system.list(event)
-        except Exception:
-            logger.exception("处理命令 `/ban list` 时发生错误。")
+        yield self.ban_system.list(event)

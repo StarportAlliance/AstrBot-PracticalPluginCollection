@@ -6,7 +6,7 @@ from astrbot.api import logger
 class MessageTemplate:
     """消息模板类。"""
 
-    template = None
+    _template: dict[str, dict[str, str]]
     """消息模板配置。"""
 
     def __init__(self, template_config: dict):
@@ -15,7 +15,7 @@ class MessageTemplate:
         Args:
             template_config (dict): 消息模板配置。
         """
-        self.template = template_config
+        self._template = template_config
 
     def get_msg_template(
         self, template_module: str, template_name: str, **kwargs: str
@@ -35,7 +35,7 @@ class MessageTemplate:
             Exception: 如果发生其他错误。
         """
         try:
-            msg_template = cast(str, self.template[template_module][template_name])
+            msg_template = cast(str, self._template[template_module][template_name])
             for key, value in kwargs.items():
                 msg_template = msg_template.replace(f"{{{key}}}", value)
             return msg_template
@@ -43,7 +43,4 @@ class MessageTemplate:
             logger.error(
                 f"获取消息模板时发生错误，消息模板 {template_module}.{template_name} 不存在。"
             )
-            raise
-        except Exception:
-            logger.exception("获取消息模板时发生错误。")
             raise

@@ -6,9 +6,9 @@ from astrbot.api import logger
 class BanSystemCore:
     """封禁系统核心功能类。"""
 
-    ban_system_config = None
+    _ban_system_config: dict
     """封禁系统配置。"""
-    ban_list = None
+    _ban_list: list[dict]
     """封禁用户列表。"""
 
     def __init__(self, ban_system_config: dict):
@@ -17,8 +17,9 @@ class BanSystemCore:
         Args:
             ban_system_config (dict): 封禁系统配置。
         """
-        self.ban_system_config = ban_system_config
-        self.ban_list = cast(list[dict], self.ban_system_config["Banlist"])
+        self._ban_system_config = ban_system_config
+        self._ban_list = cast(list[dict], self._ban_system_config["Banlist"])
+        logger.debug("封禁系统核心功能初始化完成。")
 
     def add_ban(self, user_id: str, reason: str) -> bool:
         """添加封禁用户。
@@ -30,12 +31,13 @@ class BanSystemCore:
         Returns:
             bool: 是否请求保存配置。当此值为 True 时，调用处应当调用 `config.save_config` 方法保存配置以使封禁列表真正被写入。
         """
-        if any(item["User"] == user_id for item in self.ban_list):
-            logger.info(f"用户 {user_id} 已被封禁，无需重复添加。")
+        if any(item["User"] == user_id for item in self._ban_list):
+            logger.debug(f"用户 {user_id} 已被封禁，无需重复添加。")
             return False
-        self.ban_list.append(
+        self._ban_list.append(
             {"__template_key": "SingleBan", "User": user_id, "Reason": reason}
         )
+        logger.debug(f"添加了新的封禁用户 {user_id}。")
         return True
 
     def remove_ban(self, user_id: str) -> bool:
@@ -47,7 +49,8 @@ class BanSystemCore:
         Returns:
             bool: 是否请求保存配置。当此值为 True 时，调用处应当调用 `config.save_config` 方法保存配置以使封禁列表真正被写入。
         """
-        self.ban_list = [item for item in self.ban_list if item["User"] != user_id]
+        self._ban_list = [item for item in self._ban_list if item["User"] != user_id]
+        logger.debug(f"移除了封禁用户 {user_id}。")
         return True
 
     def list_ban(self) -> list[dict]:
@@ -56,4 +59,15 @@ class BanSystemCore:
         Returns:
             list[dict]: 封禁用户列表。
         """
-        return self.ban_list
+        return self._ban_list
+
+    def check_user_is_banned(self, user_id: str) -> bool:
+        """检查用户是否被封禁。
+
+        Args:
+            user_id (str): 用户 ID。
+
+        Returns:
+            bool: 是否被封禁。
+        """
+        return any(item["User"] == user_id for item in self._ban_list)

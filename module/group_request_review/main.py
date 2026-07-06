@@ -17,15 +17,15 @@ from .log import GroupRequestLog
 class GroupRequestReview(GroupRequestLog):
     """加群请求审核模块。"""
 
-    message_template = None
+    _message_template: MessageTemplate
     """消息模板。"""
-    module_config = None
+    _module_config: dict
     """模块配置。"""
-    ban_system = None
+    _ban_system: BanSystem
     """封禁系统。"""
 
     @classmethod
-    async def init(
+    async def initialize(
         cls,
         plugin_data_path: Path,
         message_template: MessageTemplate,
@@ -41,14 +41,12 @@ class GroupRequestReview(GroupRequestLog):
             ban_system (BanSystem): 封禁系统实例。
 
         Returns:
-            GroupRequestReview | None: 模块实例。若父类初始化失败返回 None。
+            GroupRequestReview: 模块实例。
         """
         self = await super().init(plugin_data_path)
-        if self is None:
-            return None
-        self.message_template = message_template
-        self.module_config = module_config
-        self.ban_system = ban_system
+        self._message_template = message_template
+        self._module_config = module_config
+        self._ban_system = ban_system
         return self
 
     async def handle_request_review(
@@ -57,7 +55,7 @@ class GroupRequestReview(GroupRequestLog):
     ):
         """处理加群请求。"""
         # 基础事件筛选
-        if not self.module_config["Enable"]:
+        if not self._module_config["Enable"]:
             return
         if not event_filter(event, "request", "group", "add"):
             return
@@ -73,7 +71,7 @@ class GroupRequestReview(GroupRequestLog):
         )
 
         # 加载审核策略
-        review_strategies = cast(list[dict], self.module_config["ReviewStrategy"])
+        review_strategies = cast(list[dict], self._module_config["ReviewStrategy"])
         group_config = None
         for cfg in review_strategies:
             if cfg["__template_key"] == "Dedicated" and cfg["TargetGroup"] == group_id:
@@ -92,13 +90,13 @@ class GroupRequestReview(GroupRequestLog):
 
         # 主要判断逻辑部分
         if group_config["UseBanlist"]:
-            if await self.ban_system.check_user_is_banned(user_id):
+            if self._ban_system.check_user_is_banned(user_id):
                 logger.info(f"用户 {user_id} 已被封禁，将拒绝其加群请求。")
                 await self._handle_request(
                     event,
                     request_flag,
                     False,
-                    self.message_template.get_msg_template(
+                    self._message_template.get_msg_template(
                         "GroupRequestReview", "RejectByBanned"
                     ),
                 )
@@ -129,7 +127,7 @@ class GroupRequestReview(GroupRequestLog):
                     event,
                     request_flag,
                     False,
-                    self.message_template.get_msg_template(
+                    self._message_template.get_msg_template(
                         "GroupRequestReview",
                         "RejectByRateLimit",
                         remaining_time=str(remaining_time),
@@ -147,7 +145,7 @@ class GroupRequestReview(GroupRequestLog):
                         event,
                         request_flag,
                         False,
-                        self.message_template.get_msg_template(
+                        self._message_template.get_msg_template(
                             "GroupRequestReview", "RejectByInvalidLevel"
                         ),
                     )
@@ -163,7 +161,7 @@ class GroupRequestReview(GroupRequestLog):
                     event,
                     request_flag,
                     False,
-                    self.message_template.get_msg_template(
+                    self._message_template.get_msg_template(
                         "GroupRequestReview",
                         "RejectByLevelLimit",
                         required_level=level_limit["MinLevel"],
@@ -177,7 +175,7 @@ class GroupRequestReview(GroupRequestLog):
                 event,
                 request_flag,
                 False,
-                self.message_template.get_msg_template(
+                self._message_template.get_msg_template(
                     "GroupRequestReview", "RejectByRegex"
                 ),
             )
@@ -193,7 +191,7 @@ class GroupRequestReview(GroupRequestLog):
     @staticmethod
     async def _handle_request(
         event: AstrMessageEvent, request_flag: str, approve: bool, reason: str = ""
-    ) -> bool:
+    ):
         """处理加群请求。
 
         Args:
@@ -201,30 +199,15 @@ class GroupRequestReview(GroupRequestLog):
             request_flag (str): 加群请求 flag。
             approve (bool): 是否同意加群请求。
             reason (str, optional): 拒绝原因，仅在拒绝加群请求时有效。若不传入或传入空字符串则表示无理由拒绝。
-
-        Returns:
-            bool: 如果拒绝成功则返回 True，否则返回 False。
         """
-        try:
-            if not await check_self_role(event, event.get_group_id())[0]:
-                logger.error(
-                    "机器人身份校验失败。机器人不是当前群聊管理员，无法处理加群请求。"
-                )
-                return False
-            from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
-                AiocqhttpMessageEvent,
-            )
+        is_admin, _ = await check_self_role(event, event.get_group_id())
+        if not is_admin:
+            raise TypeError("机器人不是当前群聊管理员，无法处理加群请求。")
+        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
+            AiocqhttpMessageEvent,
+        )
 
-            assert isinstance(event, AiocqhttpMessageEvent)
-            await ProtocolEndApi.set_group_add_request(
-                event, request_flag, "add", approve, reason
-            )
-            return True
-        except AssertionError:
-            logger.exception(
-                "加群请求事件对象类型校验失败。这可能意味着插件源代码遭到了不合理的改动，或不兼容当前的 AstrBot 版本。",
-            )
-            return False
-        except Exception:
-            logger.exception("处理加群请求时发生意外错误。")
-            return False
+        assert isinstance(event, AiocqhttpMessageEvent)
+        await ProtocolEndApi.set_group_add_request(
+            event, request_flag, "add", approve, reason
+        )

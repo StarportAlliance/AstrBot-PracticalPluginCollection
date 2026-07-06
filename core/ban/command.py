@@ -8,9 +8,9 @@ from .main import BanSystemCore
 class BanSystem(BanSystemCore):
     """封禁系统。"""
 
-    msg_template = None
+    _msg_template: MessageTemplate
     """消息模板类。"""
-    config = None
+    _config: AstrBotConfig
     """插件配置对象。"""
 
     def __init__(self, config: AstrBotConfig, msg_template: MessageTemplate):
@@ -21,8 +21,9 @@ class BanSystem(BanSystemCore):
             msg_template (MessageTemplate): 消息模板类。
         """
         super().__init__(config["CoreConfig"]["BanSystem"])
-        self.msg_template = msg_template
-        self.config = config
+        self._msg_template = msg_template
+        self._config = config
+        logger.info("封禁系统初始化完成。")
 
     def add(
         self,
@@ -39,18 +40,25 @@ class BanSystem(BanSystemCore):
 
         Returns:
             MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
+
+        Examples:
+            ```python
+            ban_system = BanSystem(config, msg_template)
+            yield ban_system.add(event, "123456789", "测试封禁")
+            ```
         """
         try:
             if self.add_ban(user_id, reason):
-                self.config.save_config()
+                self._config.save_config()
+                logger.info(f"已封禁用户 {user_id}。")
                 return event.plain_result(
-                    self.msg_template.get_msg_template(
+                    self._msg_template.get_msg_template(
                         "BanSystem", "AddNewBan", user_id=user_id
                     )
                 )
             else:
                 return event.plain_result(
-                    self.msg_template.get_msg_template(
+                    self._msg_template.get_msg_template(
                         "BanSystem", "AddBanFailed", user_id=user_id
                     )
                 )
@@ -71,12 +79,19 @@ class BanSystem(BanSystemCore):
 
         Returns:
             MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
+
+        Examples:
+            ```python
+            ban_system = BanSystem(config, msg_template)
+            yield ban_system.remove(event, "123456789")
+            ```
         """
         try:
             self.remove_ban(user_id)
-            self.config.save_config()
+            self._config.save_config()
+            logger.info(f"已解封用户 {user_id}。")
             return event.plain_result(
-                self.msg_template.get_msg_template(
+                self._msg_template.get_msg_template(
                     "BanSystem", "RemoveBan", user_id=user_id
                 )
             )
@@ -94,20 +109,26 @@ class BanSystem(BanSystemCore):
             event (AstrMessageEvent): 消息事件对象。
 
         Returns:
-            MessageEventResult: 封禁结果消息事件结果，调用方应通过 `yield` 使 AstrBot 消费此结果。
+            MessageEventResult: 封禁结果消息事件结果
+
+        Examples:
+        ```python
+            ban_system = BanSystem(config, msg_template)
+            yield ban_system.list(event)
+        ```
         """
         try:
             banlist = self.list_ban()
             if not banlist:
                 return event.plain_result(
-                    self.msg_template.get_msg_template("BanSystem", "BanlistEmpty")
+                    self._msg_template.get_msg_template("BanSystem", "BanlistEmpty")
                 )
             banlist_lines = []
             for item in banlist:
                 user_id = item["User"]
                 reason = item.get("Reason") or "无"
                 banlist_lines.append(
-                    self.msg_template.get_msg_template(
+                    self._msg_template.get_msg_template(
                         "BanSystem",
                         "BanlistFormat",
                         user_id=user_id,
@@ -116,7 +137,7 @@ class BanSystem(BanSystemCore):
                 )
             banlist_str = "".join(banlist_lines)
             return event.plain_result(
-                self.msg_template.get_msg_template(
+                self._msg_template.get_msg_template(
                     "BanSystem", "ListBan", banlist=banlist_str
                 )
             )
