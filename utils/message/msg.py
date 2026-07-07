@@ -32,7 +32,6 @@ class MessageTemplate:
 
         Raises:
             KeyError: 如果消息模板不存在。
-            Exception: 如果发生其他错误。
         """
         try:
             msg_template = cast(str, self._template[template_module][template_name])
