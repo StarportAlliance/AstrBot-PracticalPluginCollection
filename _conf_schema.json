@@ -77,7 +77,7 @@
                 "type": "object",
                 "description": "加群请求审核",
                 "items": {
-                    "Enabled": {
+                    "Enable": {
                         "type": "bool",
                         "description": "模块开关",
                         "default": true
