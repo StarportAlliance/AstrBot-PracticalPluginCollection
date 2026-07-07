@@ -64,7 +64,9 @@ class BanSystem(BanSystemCore):
                 )
         except Exception:
             logger.exception("添加封禁用户时发生错误。")
-            raise
+            return event.plain_result(
+                self._msg_template.get_msg_template("General", "UnknownError")
+            )
 
     def remove(
         self,
@@ -97,7 +99,9 @@ class BanSystem(BanSystemCore):
             )
         except Exception:
             logger.exception("移除封禁用户时发生错误。")
-            raise
+            return event.plain_result(
+                self._msg_template.get_msg_template("General", "UnknownError")
+            )
 
     def list(
         self,
@@ -143,4 +147,6 @@ class BanSystem(BanSystemCore):
             )
         except Exception:
             logger.exception("列出封禁用户列表时发生错误。")
-            raise
+            return event.plain_result(
+                self._msg_template.get_msg_template("General", "UnknownError")
+            )

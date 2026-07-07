@@ -275,6 +275,17 @@
         "type": "object",
         "description": "消息模板配置",
         "items": {
+            "General": {
+                "type": "object",
+                "description": "通用信息",
+                "items": {
+                    "UnknownError": {
+                        "type": "string",
+                        "description": "发生未知错误时的提示信息",
+                        "default": "发生未知错误，请重试。"
+                    }
+                }
+            },
             "BanSystem": {
                 "type": "object",
                 "description": "封禁系统",
