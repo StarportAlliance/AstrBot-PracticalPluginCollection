@@ -1,4 +1,4 @@
-from datetime import datetime
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import aiosqlite
@@ -12,22 +12,27 @@ class EconomicSystem:
     """数据库文件路径。"""
 
     class InvalidTradingObjectError(ValueError):
-        """交易对象无效。
-
-        交易双方任意一方或双方无效，这可能是交易双方都为空、其中一方/双方未注册银行账户导致的。
-        """
+        """账户无效。"""
 
         def __init__(self, reason: str = ""):
+            """账户无效。
+
+            转账双方任意一方或双方无效，这可能是转账双方都为空、其中一方/双方未注册银行账户导致的。
+
+            Args:
+                reason (str, optional): 引发该异常的可选补充描述。
+            """
             self.reason = reason
 
         def __str__(self):
             return self.reason
 
     class AmountInvalidError(ValueError):
-        """交易金额无效。"""
+        """金额无效。"""
 
         def __init__(self, reason: str = ""):
-            """
+            """金额无效。
+
             Args:
                 reason (str, optional): 引发该异常的可选补充描述。
             """
@@ -40,6 +45,11 @@ class EconomicSystem:
         """余额不足。"""
 
         def __init__(self, reason: str = ""):
+            """余额不足。
+
+            Args:
+                reason (str, optional): 引发该异常的可选补充描述。
+            """
             self.reason = reason
 
         def __str__(self):
@@ -78,17 +88,32 @@ class EconomicSystem:
                     balance INTEGER NOT NULL DEFAULT 0
                 )
             """)
-            await db.execute("""
-                CREATE TABLE IF NOT EXISTS record (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    payer TEXT,
-                    payee TEXT,
-                    amount INTEGER NOT NULL,
-                    time TEXT NOT NULL
-                )
-            """)
             await db.commit()
         return economic_system
+
+    @asynccontextmanager
+    async def _get_db(self, db_connection: aiosqlite.Connection | None = None):
+        """检查传入的数据库连接是否有效，若无效则创建新连接。
+
+        传入的数据库连接不会因此而关闭。
+
+        Args:
+            db_connection (aiosqlite.Connection | None, optional): 一个*薛定谔的*数据库连接。
+
+        Yields:
+            aiosqlite.Connection: 数据库连接。
+
+        Examples:
+            ```python
+            async with self._get_db(db_connection) as db:
+                pass
+            ```
+        """
+        if db_connection is None:
+            async with aiosqlite.connect(self._db_path) as db:
+                yield db
+        else:
+            yield db_connection
 
     async def create_account(self, user_id: str):
         """新增账户。
@@ -100,9 +125,8 @@ class EconomicSystem:
             aiosqlite.IntegrityError: 如果用户 ID 已拥有银行账户。
         """
         async with aiosqlite.connect(self._db_path) as db:
-            sql = "INSERT INTO account (user_id, balance) VALUES (?, 0)"
             await db.execute(
-                sql,
+                "INSERT INTO account (user_id, balance) VALUES (?, 0)",
                 (user_id,),
             )
             await db.commit()
@@ -133,103 +157,105 @@ class EconomicSystem:
 
     async def transfer(
         self,
-        payer: str | None,
-        payee: str | None,
+        payer: str,
+        payee: str,
         amount: int,
     ):
-        """交易，将付款方的余额转给收款方。
-
-        付款方和收款方可以有一方为空，但不能都为空。
+        """转账。
 
         Args:
-            payer (str | None): 付款方用户 ID。
-            payee (str | None): 收款方用户 ID。
-            amount (int): 交易金额。
+            payer (str): 付款方用户 ID。
+            payee (str): 收款方用户 ID。
+            amount (int): 转账金额。
         Raises:
-            InvalidTradingObjectError: 如果付款方和收款方都为空。
-            AmountInvalidError: 如果交易金额无效（≤ 0）。
-            Exception: 如果交易时发生未知错误。
+            AmountInvalidError: 如果转账金额无效（≤ 0）。
         """
-        if payer is None and payee is None:
-            raise self.InvalidTradingObjectError("付款方和收款方都为空")
         if amount <= 0:
-            raise self.AmountInvalidError(f"交易金额 {amount} 无效")
-
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            raise self.AmountInvalidError(f"转账金额 {amount} 无效")
         async with aiosqlite.connect(self._db_path) as db:
-            if payer is not None:
-                cursor = await db.execute(
-                    "SELECT balance FROM account WHERE user_id = ?",
-                    (payer,),
-                )
-                row = await cursor.fetchone()
-                if row is None:
-                    raise self.InvalidTradingObjectError(f"付款方 {payer} 不存在")
-                if row[0] < amount:
-                    raise self.BalanceInsufficientError(f"付款方 {payer} 余额不足")
-                await db.execute(
-                    "UPDATE account SET balance = balance - ? WHERE user_id = ?",
-                    (amount, payer),
-                )
-            if payee is not None:
-                cursor = await db.execute(
-                    "SELECT balance FROM account WHERE user_id = ?",
-                    (payee,),
-                )
-                row = await cursor.fetchone()
-                if row is None:
-                    raise self.InvalidTradingObjectError(f"收款方 {payee} 不存在")
-                await db.execute(
-                    "UPDATE account SET balance = balance + ? WHERE user_id = ?",
-                    (amount, payee),
-                )
+            await self.reduce_balance(payer, amount, db)
+            await self.increase_balance(payee, amount, db)
+        logger.info(f"用户 {payer} 向用户 {payee} 转账了 {amount}。")
+
+    async def increase_balance(
+        self,
+        user_id: str,
+        amount: int,
+        db_connection: aiosqlite.Connection | None = None,
+    ):
+        """为给定账户增加余额。
+
+        Args:
+            user_id (str): 要增加余额的用户 ID。
+            amount (int): 增加的金额。
+            db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
+
+        Raises:
+            InvalidTradingObjectError: 如果目标用户不存在。
+        """
+        if amount <= 0:
+            raise self.AmountInvalidError
+        if user_id is None:
+            raise self.InvalidTradingObjectError("目标用户 ID 不能为空")
+        async with self._get_db(db_connection) as db:
+            if await self.get_balance(user_id, db) == -1:
+                raise self.InvalidTradingObjectError(f"目标用户 {user_id} 不存在")
             await db.execute(
-                "INSERT INTO record (payer, payee, amount, time) VALUES (?, ?, ?, ?)",
-                (payer, payee, amount, now),
+                "UPDATE account SET balance = balance + ? WHERE user_id = ?",
+                (amount, user_id),
             )
             await db.commit()
+            logger.info(f"为用户 {user_id} 增加了余额 {amount}。")
 
-    async def get_balance(self, user_id: str) -> int:
+    async def reduce_balance(
+        self,
+        user_id: str,
+        amount: int,
+        db_connection: aiosqlite.Connection | None = None,
+    ):
+        """为给定账户减少余额。
+
+        Args:
+            user_id (str): 要减少余额的用户 ID。
+            amount (int): 减少的金额。
+            db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
+
+        Raises:
+            InvalidTradingObjectError: 如果目标用户不存在。
+            BalanceInsufficientError: 如果目标用户余额不足。
+        """
+        if amount <= 0:
+            raise self.AmountInvalidError
+        if user_id is None:
+            raise self.InvalidTradingObjectError("目标用户 ID 不能为空")
+        async with self._get_db(db_connection) as db:
+            if await self.get_balance(user_id, db) == -1:
+                raise self.InvalidTradingObjectError(f"目标用户 {user_id} 不存在")
+            if await self.get_balance(user_id, db) < amount:
+                raise self.BalanceInsufficientError
+            await db.execute(
+                "UPDATE account SET balance = balance - ? WHERE user_id = ?",
+                (amount, user_id),
+            )
+            await db.commit()
+            logger.info(f"为用户 {user_id} 减少了余额 {amount}。")
+
+    async def get_balance(
+        self, user_id: str, db_connection: aiosqlite.Connection | None = None
+    ) -> int:
         """查询指定用户的账户余额。
 
         Args:
             user_id (str): 要查询的用户 ID。
+            db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
 
         Returns:
             int: 账户余额。如果账户不存在则返回 -1。
-
         """
-        async with aiosqlite.connect(self._db_path) as db:
+        async with self._get_db(db_connection) as db:
             cursor = await db.execute(
                 "SELECT balance FROM account WHERE user_id = ?",
                 (user_id,),
             )
             row = await cursor.fetchone()
             return row[0] if row else -1
-
-    async def get_records(self, user_id: str) -> list[dict]:
-        """查询指定用户的交易记录。
-
-        Args:
-            user_id (str): 要查询的用户 ID。
-
-        Returns:
-            list[dict]: 交易记录列表，每条记录格式为：
-            ```
-            {
-                "id": 0,              // 自增 ID
-                "payer": "string",    // 付款方用户 ID，可能为空
-                "payee": "string",    // 收款方用户 ID，可能为空
-                "amount": 100,        // 交易金额
-                "time": "2026-01-01 00:00:00"  // 交易时间，格式为 YYYY-MM-DD HH:MM:SS
-            }
-            ```
-        """
-        async with aiosqlite.connect(self._db_path) as db:
-            db.row_factory = aiosqlite.Row
-            cursor = await db.execute(
-                "SELECT * FROM record WHERE payer = ? OR payee = ?",
-                (user_id, user_id),
-            )
-            rows = await cursor.fetchall()
-            return [dict(row) for row in rows]
