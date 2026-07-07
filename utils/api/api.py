@@ -49,8 +49,8 @@ class ProtocolEndApi:
     @staticmethod
     async def get_group_member_info(
         event: AstrMessageEvent | AiocqhttpMessageEvent,
-        group_id: str,
-        user_id: str,
+        group_id: str | int,
+        user_id: str | int,
         no_cache: bool = False,
     ) -> dict[str, int | str | bool]:
         """## 获取群成员信息
@@ -59,8 +59,8 @@ class ProtocolEndApi:
 
         Args:
             event (AiocqhttpMessageEvent): 事件对象。
-            group_id (str): 群聊 ID。
-            user_id (str): 要获取信息的用户 ID。
+            group_id (str | int): 群聊 ID。
+            user_id (str | int): 要获取信息的用户 ID。
             no_cache (bool, optional): 是否绕过缓存获取信息。通过缓存获取信息更快，但可能存在更新延迟。默认优先使用缓存数据即不绕过缓存。
 
         Returns:
