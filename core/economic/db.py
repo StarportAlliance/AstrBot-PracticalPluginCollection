@@ -155,8 +155,8 @@ class EconomicSystem:
         if amount <= 0:
             raise ValueError(f"增加金额 {amount} 无效")
         async with self._get_db(db_connection) as db:
-            if await self.get_balance(user_id, db) == -1:
-                raise ValueError(f"目标用户 {user_id} 不存在")
+            # 如果目标账户不存在，get_balance 会抛 KeyError，这里不需要二次处理
+            await self.get_balance(user_id, db)
             await db.execute(
                 "UPDATE account SET balance = balance + ? WHERE user_id = ?",
                 (amount, user_id),
@@ -188,8 +188,6 @@ class EconomicSystem:
         if user_id is None:
             raise ValueError("目标用户 ID 不能为空")
         async with self._get_db(db_connection) as db:
-            if await self.get_balance(user_id, db) == -1:
-                raise ValueError(f"目标用户 {user_id} 不存在")
             if await self.get_balance(user_id, db) < amount:
                 raise ValueError("目标用户余额不足")
             await db.execute(
