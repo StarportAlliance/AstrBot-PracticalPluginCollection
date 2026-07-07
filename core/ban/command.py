@@ -59,7 +59,7 @@ class BanSystem(BanSystemCore):
             else:
                 return event.plain_result(
                     self._msg_template.get_msg_template(
-                        "BanSystem", "AddBanFailed", user_id=user_id
+                        "BanSystem", "DuplicateBan", user_id=user_id
                     )
                 )
         except Exception:
