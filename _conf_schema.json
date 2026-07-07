@@ -292,27 +292,32 @@
                 "items": {
                     "AddNewBan": {
                         "type": "string",
-                        "description": "添加新封禁用户成功时显示的信息，可用占位符有 {user_id}（用户 ID）。",
+                        "description": "添加新封禁用户成功时显示的信息",
+                        "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "封禁用户 {user_id} 成功。"
                     },
                     "DuplicateBan": {
                         "type": "string",
-                        "description": "添加已存在封禁用户时显示的信息，可用占位符有 {user_id}（用户 ID）。",
+                        "description": "添加已存在封禁用户时显示的信息",
+                        "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "用户 {user_id} 已被封禁，无需重复添加。"
                     },
                     "RemoveBan": {
                         "type": "string",
-                        "description": "移除封禁用户成功时显示的信息，可用占位符有 {user_id}（用户 ID）。",
+                        "description": "移除封禁用户成功时显示的信息",
+                        "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "移除封禁用户 {user_id} 成功。"
                     },
                     "ListBan": {
                         "type": "string",
-                        "description": "列出封禁用户列表时显示的信息，可用占位符有 {banlist}（封禁用户列表）。",
+                        "description": "列出封禁用户列表时显示的信息",
+                        "hint": "可用占位符有 {banlist}（封禁用户列表）。",
                         "default": "当前封禁用户列表：{banlist}"
                     },
                     "BanlistFormat": {
                         "type": "string",
-                        "description": "每行封禁用户列表的显示格式，可用占位符有 {user_id}（用户 ID）, {reason}（封禁原因）。",
+                        "description": "每行封禁用户列表的显示格式",
+                        "hint": "可用占位符有 {user_id}（用户 ID）, {reason}（封禁原因）。",
                         "default": "\n- 用户 ID：{user_id}，封禁理由：{reason}。"
                     },
                     "BanlistEmpty": {
