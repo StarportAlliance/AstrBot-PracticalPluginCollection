@@ -12,7 +12,6 @@ from .utils.message import MessageTemplate
 class PracticalPluginCollection(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
-        """插件上下文对象。"""
         self.config = config
         """插件配置。"""
         self.module_config = cast(dict, self.config["ModuleConfig"])
