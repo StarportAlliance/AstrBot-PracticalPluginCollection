@@ -1,5 +1,8 @@
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent
+from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
+    AiocqhttpMessageEvent,
+)
 
 from .api import ProtocolEndApi
 
@@ -17,10 +20,6 @@ async def check_self_role(event: AstrMessageEvent, group_id: str) -> tuple[bool,
     Raises:
         AssertionError: 如果事件对象来自非 aiocqhttp 平台。
     """
-    from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
-        AiocqhttpMessageEvent,
-    )
-
     assert isinstance(event, AiocqhttpMessageEvent)
     self_id = event.get_self_id()
     member_info = await ProtocolEndApi.get_group_member_info(event, group_id, self_id)
