@@ -24,6 +24,10 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 我超，盒！（box）
   - [ ] B 站链接解析（bilibili_link_parser）
   - [ ] 赞我（send_like）
+  - [ ] 签到（check_in）
+  - [ ] 彩票（lottery）
+  - [ ] 磕 cp（show_affection）
+  - [ ] 入/退群提醒（welcome_goodbye）
   - And More...
 
 ## 为什么？
