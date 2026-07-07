@@ -96,9 +96,6 @@ class EconomicSystem:
         Returns:
             bool: 若进行了删除操作则返回 True，否则返回 False。<br>
                 目前，不进行删除操作仅可能是因为目标 ID 不存在银行账户导致的。
-
-        Raises:
-            Exception: 如果删除账户时发生未知错误。
         """
         async with aiosqlite.connect(self._db_path) as db:
             sql = "DELETE FROM account WHERE user_id = ?"
