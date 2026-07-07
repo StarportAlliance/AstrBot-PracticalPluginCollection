@@ -75,9 +75,7 @@ class PracticalPluginCollection(Star):
                 else:  # 私聊
                     return user_id in whitelist_config["WhitelistFriends"]
             case _:  # 由于 aiocqhttp 不存在 OTHER_MESSAGE 类型事件，因此此处将其和其他可能的未知类型一并处理
-                logger.warning(
-                    f"判断事件类型 {request_type} 失败，这似乎不是 Onebot 11 的标准事件类型。请检查插件是否兼容当前 AstrBot / NapCat 版本。"
-                )
+                logger.debug(f"判断事件类型 {request_type} 失败，将忽略此事件处理。")
                 return False
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
