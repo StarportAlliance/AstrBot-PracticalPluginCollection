@@ -72,44 +72,14 @@ class GroupRequestLog:
             )
             await db.commit()
 
-    async def get_requests(self, user_id: str) -> list[RequestRecord]:
-        """查询指定用户的加群请求记录。
-
-        Args:
-            user_id (str): 要查询的用户 ID。
-
-        Returns:
-            list[RequestRecord]: 加群请求记录列表，每条记录格式为：
-            ```
-            {
-                "id": 0,                    // 自增 ID
-                "request_time": "string",   // 请求时间，格式为 YYYY-MM-DD HH:MM:SS
-                "user_id": "string"         // 加群者 ID
-            }
-            ```
-        """
-        async with aiosqlite.connect(self._db_path) as db:
-            db.row_factory = aiosqlite.Row
-            cursor = await db.execute(
-                "SELECT * FROM request_log WHERE user_id = ?",
-                (user_id,),
-            )
-            rows = await cursor.fetchall()
-            return [
-                self.RequestRecord(
-                    id=row["id"],
-                    request_time=row["request_time"],
-                    user_id=row["user_id"],
-                )
-                for row in rows
-            ]
-
-    async def get_requests_since(self, user_id: str, since: str) -> list[RequestRecord]:
+    async def get_requests(
+        self, user_id: str, since: str | None = None
+    ) -> list[RequestRecord]:
         """查询指定用户自某个时间点以来的加群请求记录。
 
         Args:
             user_id (str): 要查询的用户 ID。
-            since (str): 起始时间，格式为 YYYY-MM-DD HH:MM:SS。
+            since (str | None): 可选。基于给定的起始时间查询请求记录，格式为 YYYY-MM-DD HH:MM:SS。
 
         Returns:
             list[RequestRecord]: 加群请求记录列表，每条记录格式为：

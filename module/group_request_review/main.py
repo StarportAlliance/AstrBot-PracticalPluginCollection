@@ -111,7 +111,7 @@ class GroupRequestReview(GroupRequestLog):
             cutoff_time = (
                 datetime.now() - timedelta(minutes=statistical_time)
             ).strftime("%Y-%m-%d %H:%M:%S")
-            recent_requests = await self.get_requests_since(user_id, cutoff_time)
+            recent_requests = await self.get_requests(user_id, cutoff_time)
             if len(recent_requests) >= total_attempt:
                 logger.info(
                     f"用户 {user_id} 在 {statistical_time} 分钟内请求 {len(recent_requests)} 次，超过上限 {total_attempt}，将拒绝其加群请求。"
