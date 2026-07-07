@@ -125,6 +125,7 @@ class EconomicSystem:
             amount (int): 转账金额。
         Raises:
             ValueError: 如果转账金额无效（≤ 0）。
+            KeyError: 如果目标用户不存在。
         """
         if amount <= 0:
             raise ValueError(f"转账金额 {amount} 无效")
@@ -150,7 +151,8 @@ class EconomicSystem:
             no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
-            ValueError: 如果目标用户不存在 / 增加金额无效（≤ 0）。
+            ValueError: 增加金额无效（≤ 0）。
+            KeyError: 如果目标用户不存在。
         """
         if amount <= 0:
             raise ValueError(f"增加金额 {amount} 无效")
@@ -181,7 +183,8 @@ class EconomicSystem:
             no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
-            ValueError: 如果目标用户不存在 / 减少金额无效（≤ 0）。
+            ValueError: 减少金额无效（≤ 0）。
+            KeyError: 如果目标用户不存在。
         """
         if amount <= 0:
             raise ValueError(f"减少金额 {amount} 无效")
