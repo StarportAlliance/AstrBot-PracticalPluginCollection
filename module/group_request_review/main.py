@@ -6,6 +6,9 @@ from typing import cast
 
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent
+from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
+    AiocqhttpMessageEvent,
+)
 
 from ...core import BanSystem
 from ...utils import check_self_role, event_filter
@@ -203,9 +206,6 @@ class GroupRequestReview(GroupRequestLog):
         is_admin, _ = await check_self_role(event, event.get_group_id())
         if not is_admin:
             raise PermissionError("机器人不是当前群聊管理员，无法处理加群请求。")
-        from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
-            AiocqhttpMessageEvent,
-        )
 
         assert isinstance(event, AiocqhttpMessageEvent)
         await ProtocolEndApi.set_group_add_request(
