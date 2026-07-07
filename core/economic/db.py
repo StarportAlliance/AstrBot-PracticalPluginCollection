@@ -105,6 +105,10 @@ class EconomicSystem:
             )
             await db.commit()
             if cursor.rowcount == 0:
+                # 如果因为实际修改了 0 行抛出 KeyError 有点“刻意闹大事件”的意思，
+                # 这就倒逼调用方必须 try except 然后 pass，不处理就报错崩溃，
+                # 通过传参控制则显得无必要（见下一句）。
+                # 直接通过返回值就很方便了，不需要处理就直接 await delete_account，需要处理可以 if await delete_account。
                 return False
         return True
 
