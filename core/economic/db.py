@@ -185,8 +185,6 @@ class EconomicSystem:
         """
         if amount <= 0:
             raise ValueError(f"减少金额 {amount} 无效")
-        if user_id is None:
-            raise ValueError("目标用户 ID 不能为空")
         async with self._get_db(db_connection) as db:
             if await self.get_balance(user_id, db) < amount:
                 raise ValueError("目标用户余额不足")
