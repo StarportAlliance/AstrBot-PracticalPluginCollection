@@ -95,14 +95,20 @@ class PracticalPluginCollection(Star):
     @ban.command("add")
     async def add_ban(self, event: AstrMessageEvent, user_id: str, reason: str = ""):
         """新增封禁用户。"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
         yield self.ban_system.add(event, user_id, reason)
 
     @ban.command("remove")
     async def remove_ban(self, event: AstrMessageEvent, user_id: str):
         """解封给定用户。"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
         yield self.ban_system.remove(event, user_id)
 
     @ban.command("list")
     async def list_ban(self, event: AstrMessageEvent):
         """列出所有封禁用户。"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
         yield self.ban_system.list(event)
