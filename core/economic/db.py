@@ -173,8 +173,9 @@ class EconomicSystem:
         if amount <= 0:
             raise self.AmountInvalidError(f"转账金额 {amount} 无效")
         async with aiosqlite.connect(self._db_path) as db:
-            await self.reduce_balance(payer, amount, db)
-            await self.increase_balance(payee, amount, db)
+            await self.reduce_balance(payer, amount, db, True)
+            await self.increase_balance(payee, amount, db, True)
+            await db.commit()
         logger.info(f"用户 {payer} 向用户 {payee} 转账了 {amount}。")
 
     async def increase_balance(
@@ -182,6 +183,7 @@ class EconomicSystem:
         user_id: str,
         amount: int,
         db_connection: aiosqlite.Connection | None = None,
+        no_commit: bool = False,
     ):
         """为给定账户增加余额。
 
@@ -189,6 +191,7 @@ class EconomicSystem:
             user_id (str): 要增加余额的用户 ID。
             amount (int): 增加的金额。
             db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
+            no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
             InvalidTradingObjectError: 如果目标用户不存在。
@@ -204,7 +207,8 @@ class EconomicSystem:
                 "UPDATE account SET balance = balance + ? WHERE user_id = ?",
                 (amount, user_id),
             )
-            await db.commit()
+            if not no_commit:
+                await db.commit()
             logger.info(f"为用户 {user_id} 增加了余额 {amount}。")
 
     async def reduce_balance(
@@ -212,6 +216,7 @@ class EconomicSystem:
         user_id: str,
         amount: int,
         db_connection: aiosqlite.Connection | None = None,
+        no_commit: bool = False,
     ):
         """为给定账户减少余额。
 
@@ -219,6 +224,7 @@ class EconomicSystem:
             user_id (str): 要减少余额的用户 ID。
             amount (int): 减少的金额。
             db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
+            no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
             InvalidTradingObjectError: 如果目标用户不存在。
@@ -237,7 +243,8 @@ class EconomicSystem:
                 "UPDATE account SET balance = balance - ? WHERE user_id = ?",
                 (amount, user_id),
             )
-            await db.commit()
+            if not no_commit:
+                await db.commit()
             logger.info(f"为用户 {user_id} 减少了余额 {amount}。")
 
     async def get_balance(
