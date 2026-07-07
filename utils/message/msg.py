@@ -40,6 +40,7 @@ class MessageTemplate:
                 msg_template = msg_template.replace(f"{{{key}}}", value)
             return msg_template
         except KeyError:
+            # 有意添加日志以便更清晰的追踪问题来源
             logger.error(
                 f"获取消息模板时发生错误，消息模板 {template_module}.{template_name} 不存在。"
             )
