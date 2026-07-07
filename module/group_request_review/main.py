@@ -202,7 +202,7 @@ class GroupRequestReview(GroupRequestLog):
         """
         is_admin, _ = await check_self_role(event, event.get_group_id())
         if not is_admin:
-            raise TypeError("机器人不是当前群聊管理员，无法处理加群请求。")
+            raise PermissionError("机器人不是当前群聊管理员，无法处理加群请求。")
         from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
             AiocqhttpMessageEvent,
         )
