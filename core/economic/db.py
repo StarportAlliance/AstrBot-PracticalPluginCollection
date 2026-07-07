@@ -11,50 +11,6 @@ class EconomicSystem:
     _db_path: Path
     """数据库文件路径。"""
 
-    class InvalidTradingObjectError(ValueError):
-        """账户无效。"""
-
-        def __init__(self, reason: str = ""):
-            """账户无效。
-
-            转账双方任意一方或双方无效，这可能是转账双方都为空、其中一方/双方未注册银行账户导致的。
-
-            Args:
-                reason (str, optional): 引发该异常的可选补充描述。
-            """
-            self.reason = reason
-
-        def __str__(self):
-            return self.reason
-
-    class AmountInvalidError(ValueError):
-        """金额无效。"""
-
-        def __init__(self, reason: str = ""):
-            """金额无效。
-
-            Args:
-                reason (str, optional): 引发该异常的可选补充描述。
-            """
-            self.reason = reason
-
-        def __str__(self):
-            return self.reason
-
-    class BalanceInsufficientError(ValueError):
-        """余额不足。"""
-
-        def __init__(self, reason: str = ""):
-            """余额不足。
-
-            Args:
-                reason (str, optional): 引发该异常的可选补充描述。
-            """
-            self.reason = reason
-
-        def __str__(self):
-            return self.reason
-
     def __init__(self, plugin_data_path: Path):
         """初始化经济系统静态资源。
 
@@ -168,10 +124,10 @@ class EconomicSystem:
             payee (str): 收款方用户 ID。
             amount (int): 转账金额。
         Raises:
-            AmountInvalidError: 如果转账金额无效（≤ 0）。
+            ValueError: 如果转账金额无效（≤ 0）。
         """
         if amount <= 0:
-            raise self.AmountInvalidError(f"转账金额 {amount} 无效")
+            raise ValueError(f"转账金额 {amount} 无效")
         async with aiosqlite.connect(self._db_path) as db:
             await self.reduce_balance(payer, amount, db, True)
             await self.increase_balance(payee, amount, db, True)
@@ -194,15 +150,13 @@ class EconomicSystem:
             no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
-            InvalidTradingObjectError: 如果目标用户不存在。
+            ValueError: 如果目标用户不存在 / 增加金额无效（≤ 0）。
         """
         if amount <= 0:
-            raise self.AmountInvalidError
-        if user_id is None:
-            raise self.InvalidTradingObjectError("目标用户 ID 不能为空")
+            raise ValueError(f"增加金额 {amount} 无效")
         async with self._get_db(db_connection) as db:
             if await self.get_balance(user_id, db) == -1:
-                raise self.InvalidTradingObjectError(f"目标用户 {user_id} 不存在")
+                raise ValueError(f"目标用户 {user_id} 不存在")
             await db.execute(
                 "UPDATE account SET balance = balance + ? WHERE user_id = ?",
                 (amount, user_id),
@@ -227,18 +181,17 @@ class EconomicSystem:
             no_commit (bool, optional): **内部参数**。是否不提交事务。
 
         Raises:
-            InvalidTradingObjectError: 如果目标用户不存在。
-            BalanceInsufficientError: 如果目标用户余额不足。
+            ValueError: 如果目标用户不存在 / 减少金额无效（≤ 0）。
         """
         if amount <= 0:
-            raise self.AmountInvalidError
+            raise ValueError(f"减少金额 {amount} 无效")
         if user_id is None:
-            raise self.InvalidTradingObjectError("目标用户 ID 不能为空")
+            raise ValueError("目标用户 ID 不能为空")
         async with self._get_db(db_connection) as db:
             if await self.get_balance(user_id, db) == -1:
-                raise self.InvalidTradingObjectError(f"目标用户 {user_id} 不存在")
+                raise ValueError(f"目标用户 {user_id} 不存在")
             if await self.get_balance(user_id, db) < amount:
-                raise self.BalanceInsufficientError
+                raise ValueError("目标用户余额不足")
             await db.execute(
                 "UPDATE account SET balance = balance - ? WHERE user_id = ?",
                 (amount, user_id),
