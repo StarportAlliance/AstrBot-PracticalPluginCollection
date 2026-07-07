@@ -137,6 +137,7 @@ class GroupRequestReview(GroupRequestLog):
                     ),
                 )
                 return
+            # 即使没有通过下面的其他限制也需要计入请求次数
             await self.add_request(user_id)
         level_limit = cast(dict, group_config["LevelLimit"])
         if level_limit["MinLevel"] > 0:
