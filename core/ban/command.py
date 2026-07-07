@@ -116,10 +116,10 @@ class BanSystem(BanSystemCore):
             MessageEventResult: 封禁结果消息事件结果
 
         Examples:
-        ```python
+            ```python
             ban_system = BanSystem(config, msg_template)
             yield ban_system.list(event)
-        ```
+            ```
         """
         try:
             banlist = self.list_ban()
