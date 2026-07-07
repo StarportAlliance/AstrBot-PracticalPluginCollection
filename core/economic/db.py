@@ -257,7 +257,10 @@ class EconomicSystem:
             db_connection (aiosqlite.Connection | None, optional): **内部参数**。数据库连接对象，可选，若不提供则方法将自行初始化。
 
         Returns:
-            int: 账户余额。如果账户不存在则返回 -1。
+            int: 账户余额。
+
+        Raises:
+            KeyError: 如果账户不存在。
         """
         async with self._get_db(db_connection) as db:
             cursor = await db.execute(
@@ -265,4 +268,7 @@ class EconomicSystem:
                 (user_id,),
             )
             row = await cursor.fetchone()
-            return row[0] if row else -1
+            if row:
+                return row[0]
+            else:
+                raise KeyError(f"用户 {user_id} 不存在")
