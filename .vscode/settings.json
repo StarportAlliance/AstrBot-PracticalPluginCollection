@@ -1,7 +1,4 @@
 {
-    "yaml.schemas": {
-        "./.vscode/AstrBotPluginMetadata.schema.json": "**/metadata.yaml"
-    },
     "markdown.validate.enabled": false,
     "json.schemas": [
         {

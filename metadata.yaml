@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=./.vscode/AstrBotPluginMetadata.schema.json
+# ↑ 不使用 $schema 而使用魔法注释以避免框架方出现神秘的兼容性问题，我懒得测但我也懒得赌。
 name: astrbot_plugin_practical_collection # practical 和 plugin 对调位置以符合 AstrBot 插件规范的命名规则
 display_name: AstrBot 实用插件合集
 desc: PracticalPluginCollection 是 AstrBot 的实用插件合集，旨在集成多个模块并将其封装为一个统一插件，并通过多功能互联等改进来提供更统一流畅的使用体验。
