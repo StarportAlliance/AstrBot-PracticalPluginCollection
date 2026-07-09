@@ -84,6 +84,8 @@ class PracticalPluginCollection(Star):
             return
         await self.group_request_reviewer.handle_request_review(event)
 
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command_group("ban")
     def ban(self):
         """封禁系统功能命令组。"""
