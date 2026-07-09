@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import TypedDict
 
 import aiosqlite
+from astrbot.api import logger
 
 
 class GroupRequestLog:
@@ -31,6 +32,7 @@ class GroupRequestLog:
             self.plugin_data_path / "module" / "group_request_review" / "log.db"
         )
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.debug("加群请求记录数据库静态资源初始化完成。")
 
     @classmethod
     async def init(cls, plugin_data_path: Path):
@@ -56,6 +58,7 @@ class GroupRequestLog:
                 ON request_log(user_id)
             """)
             await db.commit()
+        logger.debug("加群请求记录数据库初始化完成。")
         return log
 
     async def add_request(self, user_id: str):

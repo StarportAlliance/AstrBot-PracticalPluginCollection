@@ -46,6 +46,7 @@ class EconomicSystem:
                 )
             """)
             await db.commit()
+        logger.debug("经济系统数据库初始化完成。")
         return economic_system
 
     @asynccontextmanager
