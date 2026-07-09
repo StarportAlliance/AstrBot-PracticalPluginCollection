@@ -28,7 +28,7 @@ class PracticalPluginCollection(Star):
     async def initialize(self):
         """初始化插件。"""
         if not self.config["GlobalEnable"]:
-            logger.info(
+            logger.warning(
                 "插件全局开关已关闭，将不会进行任何操作。如果这不是预期行为，请检查你的插件配置。"
             )
         else:
