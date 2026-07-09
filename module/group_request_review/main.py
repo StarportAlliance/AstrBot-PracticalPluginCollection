@@ -141,7 +141,9 @@ class GroupRequestReview(GroupRequestLog):
             await self.add_request(user_id)
         level_limit = cast(dict, group_config["LevelLimit"])
         if level_limit["MinLevel"] > 0:
-            member_info = await ProtocolEndApi.get_stranger_info(event, user_id, True)
+            member_info = await ProtocolEndApi.get_stranger_info(
+                event, int(user_id), True
+            )
             if member_info["isHideQQLevel"]:
                 if not level_limit["SkipInvalidLevel"]:
                     logger.info(f"用户 {user_id} 隐藏了 QQ 等级，将拒绝其加群请求。")
@@ -204,7 +206,7 @@ class GroupRequestReview(GroupRequestLog):
             approve (bool): 是否同意加群请求。
             reason (str, optional): 拒绝原因，仅在拒绝加群请求时有效。若不传入或传入空字符串则表示无理由拒绝。
         """
-        is_admin, _ = await check_self_role(event, event.get_group_id())
+        is_admin, _ = await check_self_role(event, int(event.get_group_id()))
         if not is_admin:
             raise PermissionError("机器人不是当前群聊管理员，无法处理加群请求。")
 

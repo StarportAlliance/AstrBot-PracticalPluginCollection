@@ -49,8 +49,8 @@ class ProtocolEndApi:
     @staticmethod
     async def get_group_member_info(
         event: AstrMessageEvent | AiocqhttpMessageEvent,
-        group_id: str | int,
-        user_id: str | int,
+        group_id: int,
+        user_id: int,
         no_cache: bool = False,
     ) -> dict[str, int | str | bool]:
         """## 获取群成员信息
@@ -59,8 +59,8 @@ class ProtocolEndApi:
 
         Args:
             event (AiocqhttpMessageEvent): 事件对象。
-            group_id (str | int): 群聊 ID。
-            user_id (str | int): 要获取信息的用户 ID。
+            group_id (int): 群聊 ID。
+            user_id (int): 要获取信息的用户 ID。
             no_cache (bool, optional): 是否绕过缓存获取信息。通过缓存获取信息更快，但可能存在更新延迟。默认优先使用缓存数据即不绕过缓存。
 
         Returns:
@@ -72,8 +72,8 @@ class ProtocolEndApi:
         assert isinstance(event, AiocqhttpMessageEvent)
         client = event.bot
         payloads: dict[str, Any] = {
-            "group_id": int(group_id),
-            "user_id": int(user_id),
+            "group_id": group_id,
+            "user_id": user_id,
             "no_cache": no_cache,
             "self_id": int(event.get_self_id()),
         }
@@ -86,7 +86,7 @@ class ProtocolEndApi:
     @staticmethod
     async def get_stranger_info(
         event: AstrMessageEvent | AiocqhttpMessageEvent,
-        user_id: str | int,
+        user_id: int,
         no_cache: bool = False,
     ) -> dict[str, int | str | bool]:
         """## 获取陌生人信息
@@ -95,7 +95,7 @@ class ProtocolEndApi:
 
         Args:
             event (AstrMessageEvent | AiocqhttpMessageEvent): 事件对象。
-            user_id (str | int): 要获取信息的用户 ID。
+            user_id (int): 要获取信息的用户 ID。
             no_cache (bool, optional): 是否绕过缓存获取信息。通过缓存获取信息更快，但可能存在更新延迟。默认优先使用缓存数据即不绕过缓存。
 
         Returns:
@@ -107,7 +107,7 @@ class ProtocolEndApi:
         assert isinstance(event, AiocqhttpMessageEvent)
         client = event.bot
         payloads: dict[str, Any] = {
-            "user_id": int(user_id),
+            "user_id": user_id,
             "no_cache": no_cache,
             "self_id": int(event.get_self_id()),
         }

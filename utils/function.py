@@ -7,12 +7,12 @@ from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
 from .api import ProtocolEndApi
 
 
-async def check_self_role(event: AstrMessageEvent, group_id: str) -> tuple[bool, bool]:
+async def check_self_role(event: AstrMessageEvent, group_id: int) -> tuple[bool, bool]:
     """检查机器人在给定群聊的身份。
 
     Args:
         event (AstrMessageEvent): 事件对象。
-        group_id (str): 要检查的群聊 ID。
+        group_id (int): 要检查的群聊 ID。
 
     Returns:
         tuple[bool, bool]: 是否是管理员，是否是群主。
@@ -21,8 +21,9 @@ async def check_self_role(event: AstrMessageEvent, group_id: str) -> tuple[bool,
         AssertionError: 如果事件对象来自非 aiocqhttp 平台。
     """
     assert isinstance(event, AiocqhttpMessageEvent)
-    self_id = event.get_self_id()
-    member_info = await ProtocolEndApi.get_group_member_info(event, group_id, self_id)
+    member_info = await ProtocolEndApi.get_group_member_info(
+        event, group_id, int(event.get_self_id())
+    )
     match member_info["role"]:
         case "member":
             return False, False
