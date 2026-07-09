@@ -9,4 +9,4 @@ author: QingFeng
 repo: https://github.com/StarportAlliance/AstrBot-PracticalPluginCollection
 support_platforms:
   - aiocqhttp
-astrbot_version: ">=4.17.6,<5"
+astrbot_version: ">=4.17.6,<4.27.0"
