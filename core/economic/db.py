@@ -21,6 +21,7 @@ class EconomicSystem:
         """
         self.plugin_data_path = plugin_data_path
         self._db_path = self.plugin_data_path / "core" / "economic.db"
+        self._db_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug("经济系统静态资源初始化完成。")
 
     @classmethod
