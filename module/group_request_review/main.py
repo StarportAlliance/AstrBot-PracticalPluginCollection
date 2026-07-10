@@ -67,10 +67,17 @@ class GroupRequestReview(GroupRequestLog):
         raw_message = cast(dict, event.message_obj.raw_message)
         group_id = str(raw_message["group_id"])
         user_id = str(raw_message["user_id"])
-        input_answer = str(raw_message["comment"])
+        raw_comment = str(raw_message["comment"])
+        if "\n答案：" in raw_comment:
+            input_answer = raw_comment.split("\n答案：", 1)[1]
+        else:
+            input_answer = raw_comment
+            logger.warning(
+                f"未能判断用户 {user_id} 加群实际输入答案，将使用原始内容作为输入：`{raw_comment}`。"
+            )
         request_flag = str(raw_message["flag"])
         logger.info(
-            f"收到用户 {user_id} 来自群 {group_id} 的加群请求，答案：{input_answer}。"
+            f"收到用户 {user_id} 来自群 {group_id} 的加群请求，答案：`{input_answer}`。"
         )
 
         # 加载审核策略
@@ -189,7 +196,7 @@ class GroupRequestReview(GroupRequestLog):
 
         # 检查全部通过，同意加群请求
         logger.info(
-            f"用户 {user_id} 答案中匹配了关键词 {match.group()}，将同意其加入群 {group_id}。"
+            f"用户 {user_id} 答案中匹配了关键词 `{match.group()}`，将同意其加入群 {group_id}。"
         )
         await self._handle_request(event, request_flag, True)
         return
