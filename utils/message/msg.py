@@ -36,7 +36,7 @@ class MessageTemplate:
         try:
             msg_template = cast(str, self._template[template_module][template_name])
             for key, value in kwargs.items():
-                msg_template = msg_template.replace(f"{{{key}}}", value)
+                msg_template = msg_template.replace(f"{{{key}}}", str(value))
             return msg_template
         except KeyError:
             # 有意添加日志以便更清晰的追踪问题来源
