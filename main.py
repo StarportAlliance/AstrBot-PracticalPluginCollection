@@ -58,6 +58,8 @@ class PracticalPluginCollection(Star):
         """
         if not self.config["GlobalEnable"]:
             return False
+        if self.ban_system.check_user_is_banned(event.get_sender_id()):
+            return False
         user_id = event.get_sender_id()
         group_id = event.get_group_id()
         request_type = event.get_message_type().value
