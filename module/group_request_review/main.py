@@ -56,7 +56,11 @@ class GroupRequestReview(GroupRequestLog):
         self,
         event: AstrMessageEvent,
     ):
-        """处理加群请求。"""
+        """处理加群请求。
+
+        Args:
+            event (AstrMessageEvent): 加群请求事件。
+        """
         # 基础事件筛选
         if not self._module_config["Enable"]:
             return
