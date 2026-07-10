@@ -106,7 +106,7 @@
                                     "TimeLimit": {
                                         "type": "object",
                                         "description": "加群频率限制",
-                                        "hint": "限制加群者短时间内的加群次数。",
+                                        "hint": "统计最近单位时间内的加群请求次数，若该段时间内请求次数达到上限将拒绝其请求。",
                                         "items": {
                                             "Enable": {
                                                 "type": "bool",
@@ -116,7 +116,7 @@
                                             "StatisticalTime": {
                                                 "type": "int",
                                                 "description": "统计时间",
-                                                "hint": "当加群者首次加群时将开始计时，若在计时内加群次数超出单位次数上限将触发速率限制，反之若没有将重置加群次数计数。单位为分钟。",
+                                                "hint": "单位为分钟。",
                                                 "default": 10,
                                                 "slider": {
                                                     "min": 1,
@@ -127,22 +127,11 @@
                                             "TotalAttempt": {
                                                 "type": "int",
                                                 "description": "单位时间内加群次数上限",
-                                                "hint": "加群者于单位时间内最多可以尝试加群多少次，超出将触发速率限制。",
+                                                "hint": "加群者于单位时间内最多可以尝试加群多少次。",
                                                 "default": 3,
                                                 "slider": {
                                                     "min": 1,
                                                     "max": 10,
-                                                    "step": 1
-                                                }
-                                            },
-                                            "PunishmentDuration": {
-                                                "type": "int",
-                                                "description": "频率限制时长",
-                                                "hint": "加群者触发速率限制后要限制其加群的时长，单位为分钟，期间内该加群者的加群请求将被直接拒绝。",
-                                                "default": 10,
-                                                "slider": {
-                                                    "min": 1,
-                                                    "max": 60,
                                                     "step": 1
                                                 }
                                             }
