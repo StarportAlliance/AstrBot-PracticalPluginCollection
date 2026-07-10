@@ -319,6 +319,7 @@
             "GroupRequestReview": {
                 "type": "object",
                 "description": "加群请求审核",
+                "hint": "QQ 会限制拒绝理由的最大字数（然而我不清楚具体是多少），超出会被截断，建议拒绝理由稍微简洁一些。",
                 "items": {
                     "RejectByBanned": {
                         "type": "string",
