@@ -80,7 +80,7 @@
                     "Enable": {
                         "type": "bool",
                         "description": "模块开关",
-                        "default": true
+                        "default": false
                     },
                     "ReviewStrategy": {
                         "type": "template_list",
@@ -257,6 +257,17 @@
                         }
                     }
                 }
+            },
+            "SendLike": {
+                "type": "object",
+                "description": "赞我",
+                "items": {
+                    "Enable": {
+                        "type": "bool",
+                        "description": "模块开关",
+                        "default": false
+                    }
+                }
             }
         }
     },
@@ -281,25 +292,25 @@
                 "items": {
                     "AddNewBan": {
                         "type": "string",
-                        "description": "添加新封禁用户成功时显示的信息",
+                        "description": "添加新封禁用户成功时发送的信息",
                         "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "封禁用户 {user_id} 成功。"
                     },
                     "DuplicateBan": {
                         "type": "string",
-                        "description": "添加已存在封禁用户时显示的信息",
+                        "description": "添加已存在封禁用户时发送的信息",
                         "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "用户 {user_id} 已被封禁，无需重复添加。"
                     },
                     "RemoveBan": {
                         "type": "string",
-                        "description": "移除封禁用户成功时显示的信息",
+                        "description": "移除封禁用户成功时发送的信息",
                         "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "移除封禁用户 {user_id} 成功。"
                     },
                     "ListBan": {
                         "type": "string",
-                        "description": "列出封禁用户列表时显示的信息",
+                        "description": "列出封禁用户列表时发送的信息",
                         "hint": "可用占位符有 {banlist}（封禁用户列表）。",
                         "default": "当前封禁用户列表：{banlist}"
                     },
@@ -311,7 +322,7 @@
                     },
                     "BanlistEmpty": {
                         "type": "string",
-                        "description": "当没有任何人被封禁时显示的信息。",
+                        "description": "当没有任何人被封禁时发送的信息。",
                         "default": "当前封禁列表为空。"
                     }
                 }
@@ -350,6 +361,22 @@
                         "description": "正则表达式拒绝时使用的理由",
                         "hint": "当加群者填写答案未匹配正则表达式时，将使用此理由拒绝其加群请求。",
                         "default": "您的答案不符合要求，请重新填写。"
+                    }
+                }
+            },
+            "SendLike": {
+                "type": "object",
+                "description": "赞我",
+                "items": {
+                    "SendSuccess": {
+                        "type": "string",
+                        "description": "点赞成功时发送的消息",
+                        "default": "点赞成功！"
+                    },
+                    "InvalidTimes": {
+                        "type": "string",
+                        "description": "无效点赞次数时发送的消息",
+                        "default": "无效的点赞次数，范围需在 1-20 之间。"
                     }
                 }
             }

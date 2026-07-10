@@ -116,3 +116,26 @@ class ProtocolEndApi:
             f"请求了协议端 API /get_stranger_info，请求参数：`{payloads}`，返回结果：`{stranger_info}`。"
         )
         return cast(dict[str, int | str | bool], stranger_info)
+
+    @staticmethod
+    async def send_like(
+        event: AstrMessageEvent | AiocqhttpMessageEvent, user_id: int, times: int = 1
+    ):
+        """## 点赞
+
+        给指定用户点赞。
+
+        Args:
+            event (AstrMessageEvent | AiocqhttpMessageEvent): 事件对象。
+            user_id (int): 要点赞的用户 ID。
+            times (int, optional): 点赞次数。（普通用户对单个用户每日点赞上限为 10 次，SVIP 为 20 次）
+        """
+        assert isinstance(event, AiocqhttpMessageEvent)
+        client = event.bot
+        payloads: dict[str, Any] = {
+            "user_id": user_id,
+            "times": times,
+            "self_id": int(event.get_self_id()),
+        }
+        await client.api.send_like(**payloads)
+        logger.debug(f"请求了协议端 API /send_like，请求参数：`{payloads}`。")
