@@ -20,9 +20,10 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 
 ## 编码要求
 
-- CodeGraph 是一个预构建的知识图谱，包含代码库中每个符号、调用边和依赖关系。你应在开始任务前先调用 CodeGraph 工具（`codegraph_explore`）以获取项目的知识图谱，尽量避免通过文件搜索来获取代码信息。
-  - 如果你没有相关工具可调用，请先用文件搜索方式获取代码信息，在完成任务时明确告知用户 CodeGraph 工具不可用，并引导用户前往 https://github.com/colbymchenry/codegraph 安装 CodeGraph。
-- 对于一次性操作，除非现有设计需要，否则不应返回任何值而**仅仅为了**表明操作已成功完成。
+### CodeGraph
+
+CodeGraph 是一个预构建的知识图谱，包含代码库中每个符号、调用边和依赖关系。你应在开始任务前先调用 CodeGraph 工具（`codegraph_explore`）以获取项目的知识图谱，尽量避免通过文件搜索来获取代码信息。\
+如果你没有相关工具可调用，请先用文件搜索方式获取代码信息，在完成任务时明确告知用户 CodeGraph 工具不可用，并引导用户前往 https://github.com/colbymchenry/codegraph 安装 CodeGraph。
 
 ### 结构定义
 
@@ -60,7 +61,8 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 #### 返回值类型注解
 
 对于有返回值的函数/方法必须明确注解返回值类型，但若返回值为类实例则不进行注解。\
-对于返回值为 None 的函数/方法，不应添加类型注解。
+对于返回值为 None 的函数/方法，不应添加类型注解。\
+对于一次性操作，除非现有设计需要，否则不应返回任何值而**仅仅为了**表明操作已成功完成。
 
 ## 开发提示
 
