@@ -35,16 +35,16 @@ class SendLike:
                 raise ValueError("点赞次数须在 1 到 20 之间。")
             await ProtocolEndApi.send_like(event, int(event.get_sender_id()), times)
             return event.plain_result(
-                self._msg_template.get_msg_template("SendLike", "SendSuccess")
+                self._msg_template.get_msg_template(
+                    "SendLike", "SendSuccess", times=str(times)
+                )
             )
         except ValueError:
             logger.info(
                 f"用户 {event.get_sender_id()} 请求的点赞次数 {times} 无效，拒绝点赞请求。"
             )
             return event.plain_result(
-                self._msg_template.get_msg_template(
-                    "SendLike", "InvalidTimes", times=str(times)
-                )
+                self._msg_template.get_msg_template("SendLike", "InvalidTimes")
             )
         except aiocqhttp.exceptions.ActionFailed:
             # 目前全部假定 ActionFailed 是因为点赞次数达每日上限，这里写个 debug log 便于排查其他未知问题
