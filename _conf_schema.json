@@ -258,16 +258,10 @@
                     }
                 }
             },
-            "SendLike": {
-                "type": "object",
-                "description": "赞我",
-                "items": {
-                    "Enable": {
-                        "type": "bool",
-                        "description": "模块开关",
-                        "default": false
-                    }
-                }
+            "EnableSendLike": {
+                "type": "bool",
+                "description": "启用赞我模块",
+                "default": false
             }
         }
     },

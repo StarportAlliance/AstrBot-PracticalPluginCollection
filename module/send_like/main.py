@@ -11,11 +11,8 @@ class SendLike:
 
     _msg_template: MessageTemplate
 
-    _module_config: dict
-
-    def __init__(self, msg_template: MessageTemplate, module_config: dict) -> None:
+    def __init__(self, msg_template: MessageTemplate) -> None:
         self._msg_template = msg_template
-        self._module_config = module_config
 
     async def like(
         self, event: AstrMessageEvent, times: int = 10

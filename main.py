@@ -110,6 +110,8 @@ class PracticalPluginCollection(Star):
         """加群请求自动审核模块事件接收器。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
+        if not self.module_config["GroupRequestReview"]["Enable"]:
+            return
         await self.global_entry.group_request_review.handle_request_review(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
@@ -117,5 +119,7 @@ class PracticalPluginCollection(Star):
     async def like(self, event: AstrMessageEvent, times: int = 10):
         """赞我！"""
         if not self._event_filter(event, self.config["Whitelist"]):
+            return
+        if not self.module_config["EnableSendLike"]:
             return
         yield await self.global_entry.send_like.like(event, times)

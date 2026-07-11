@@ -32,5 +32,5 @@ class GlobalEntry:
             config["ModuleConfig"]["GroupRequestReview"],
             cls.ban,
         )
-        cls.send_like = SendLike(msg_template, config["ModuleConfig"]["SendLike"])
+        cls.send_like = SendLike(msg_template)
         return cls
