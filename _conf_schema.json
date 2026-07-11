@@ -377,6 +377,11 @@
                         "type": "string",
                         "description": "无效点赞次数时发送的消息",
                         "default": "无效的点赞次数，范围需在 1-20 之间。"
+                    },
+                    "DailyLimit": {
+                        "type": "string",
+                        "description": "点赞次数达每日上限时发送的消息",
+                        "default": "点赞次数已达今日上限。"
                     }
                 }
             }
