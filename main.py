@@ -118,4 +118,4 @@ class PracticalPluginCollection(Star):
         """赞我！"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        yield self.global_entry.send_like.like(event, times)
+        yield await self.global_entry.send_like.like(event, times)
