@@ -365,7 +365,8 @@
                     "SendSuccess": {
                         "type": "string",
                         "description": "点赞成功时发送的消息",
-                        "default": "点赞成功！"
+                        "hint": "可用占位符有 {times}（尝试点赞次数，协议端限制不支持查看实际点赞次数）。",
+                        "default": "点赞 {times} 次成功！"
                     },
                     "InvalidTimes": {
                         "type": "string",

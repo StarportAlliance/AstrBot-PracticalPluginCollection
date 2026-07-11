@@ -42,7 +42,9 @@ class SendLike:
                 f"用户 {event.get_sender_id()} 请求的点赞次数 {times} 无效，拒绝点赞请求。"
             )
             return event.plain_result(
-                self._msg_template.get_msg_template("SendLike", "InvalidTimes")
+                self._msg_template.get_msg_template(
+                    "SendLike", "InvalidTimes", times=str(times)
+                )
             )
         except aiocqhttp.exceptions.ActionFailed:
             # 目前全部假定 ActionFailed 是因为点赞次数达每日上限，这里写个 debug log 便于排查其他未知问题
