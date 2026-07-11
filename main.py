@@ -75,13 +75,6 @@ class PracticalPluginCollection(Star):
                 return False
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    async def group_request_review(self, event: AstrMessageEvent):
-        """加群请求自动审核模块事件接收器。"""
-        if not self._event_filter(event, self.config["Whitelist"]):
-            return
-        await self.global_entry.group_request_review.handle_request_review(event)
-
-    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command_group("ban")
     def ban(self):
@@ -107,3 +100,18 @@ class PracticalPluginCollection(Star):
         if not self._event_filter(event, self.config["Whitelist"]):
             return
         yield self.global_entry.ban.list(event)
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    async def group_request_review(self, event: AstrMessageEvent):
+        """加群请求自动审核模块事件接收器。"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
+        await self.global_entry.group_request_review.handle_request_review(event)
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.command("like")
+    async def like(self, event: AstrMessageEvent, times: int = 10):
+        """赞我！"""
+        if not self._event_filter(event, self.config["Whitelist"]):
+            return
+        yield self.global_entry.send_like.like(event, times)
