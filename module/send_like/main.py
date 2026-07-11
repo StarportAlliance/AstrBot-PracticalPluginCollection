@@ -16,7 +16,7 @@ class SendLike:
         self._msg_template = msg_template
         self._module_config = module_config
 
-    async def send_like(
+    async def like(
         self, event: AstrMessageEvent, times: int = 10
     ) -> MessageEventResult:
         """赞我！
@@ -29,7 +29,7 @@ class SendLike:
 
         Examples:
             ```python
-            yield send_like(event)
+            yield like(event)
             ```
         """
         try:

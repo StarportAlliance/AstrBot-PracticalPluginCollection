@@ -4,8 +4,7 @@ from astrbot.api import AstrBotConfig, logger
 from astrbot.api.event import AstrMessageEvent, filter
 from astrbot.api.star import Context, Star, StarTools
 
-from .core import BanSystem, EconomicSystem
-from .module import GroupRequestReview
+from .entry import GlobalEntry
 from .utils.message import MessageTemplate
 
 
@@ -32,14 +31,10 @@ class PracticalPluginCollection(Star):
                 "插件全局开关已关闭，将不会进行任何操作。如果这不是预期行为，请检查你的插件配置。"
             )
         else:
-            self.msg_template = MessageTemplate(self.config["MessageTemplate"])
-            self.ban_system = BanSystem(self.config, self.msg_template)
-            self.economic_system = await EconomicSystem.init(self.plugin_data_path)
-            self.group_request_reviewer = await GroupRequestReview.initialize(
+            self.global_entry = await GlobalEntry.init(
                 self.plugin_data_path,
-                self.msg_template,
-                self.module_config["GroupRequestReview"],
-                self.ban_system,
+                self.config,
+                MessageTemplate(self.config["MessageTemplate"]),
             )
             logger.info("插件初始化完成。")
 
@@ -58,7 +53,7 @@ class PracticalPluginCollection(Star):
         """
         if not self.config["GlobalEnable"]:
             return False
-        if self.ban_system.check_user_is_banned(event.get_sender_id()):
+        if self.global_entry.ban.check_user_is_banned(event.get_sender_id()):
             return False
         user_id = event.get_sender_id()
         group_id = event.get_group_id()
@@ -84,7 +79,7 @@ class PracticalPluginCollection(Star):
         """加群请求自动审核模块事件接收器。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        await self.group_request_reviewer.handle_request_review(event)
+        await self.global_entry.group_request_review.handle_request_review(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
@@ -97,18 +92,18 @@ class PracticalPluginCollection(Star):
         """新增封禁用户。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        yield self.ban_system.add(event, user_id, reason)
+        yield self.global_entry.ban.add(event, user_id, reason)
 
     @ban.command("remove")
     async def remove_ban(self, event: AstrMessageEvent, user_id: str):
         """解封给定用户。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        yield self.ban_system.remove(event, user_id)
+        yield self.global_entry.ban.remove(event, user_id)
 
     @ban.command("list")
     async def list_ban(self, event: AstrMessageEvent):
         """列出所有封禁用户。"""
         if not self._event_filter(event, self.config["Whitelist"]):
             return
-        yield self.ban_system.list(event)
+        yield self.global_entry.ban.list(event)
