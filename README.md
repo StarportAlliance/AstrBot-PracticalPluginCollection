@@ -23,12 +23,16 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 今日人品（daily_luck）
   - [ ] 我超，盒！（box）
   - [ ] B 站链接解析（bilibili_link_parser）
-  - [ ] 赞我（send_like）
+  - [x] 赞我（send_like）：让机器人点赞你的资料卡。
   - [ ] 签到（check_in）
   - [ ] 彩票（lottery）
   - [ ] 磕 cp（show_affection）
   - [ ] 入/退群提醒（welcome_goodbye）
   - And More...
+
+## 安装
+
+在 AstrBot 插件管理页面点击右下角 + 按钮（安装插件），选择`从链接安装`，复制粘贴本仓库 URL，点击安装即可。
 
 ## 为什么？
 
