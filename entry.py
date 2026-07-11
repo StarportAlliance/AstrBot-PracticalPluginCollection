@@ -2,10 +2,9 @@ from pathlib import Path
 
 from astrbot.api import AstrBotConfig
 
-from utils.message.msg import MessageTemplate
-
 from .core import BanSystem, EconomicSystem
 from .module import GroupRequestReview, SendLike
+from .utils.message.msg import MessageTemplate
 
 
 class GlobalEntry:
