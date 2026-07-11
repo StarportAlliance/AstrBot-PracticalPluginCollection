@@ -26,11 +26,13 @@ class GlobalEntry:
         """
         cls.ban = BanSystem(config, msg_template)
         cls.economic = await EconomicSystem.init(plugin_data_path)
-        cls.group_request_review = await GroupRequestReview.initialize(
-            plugin_data_path,
-            msg_template,
-            config["ModuleConfig"]["GroupRequestReview"],
-            cls.ban,
-        )
-        cls.send_like = SendLike(msg_template)
+        if config["ModuleConfig"]["GroupRequestReview"]["Enable"]:
+            cls.group_request_review = await GroupRequestReview.initialize(
+                plugin_data_path,
+                msg_template,
+                config["ModuleConfig"]["GroupRequestReview"],
+                cls.ban,
+            )
+        if config["ModuleConfig"]["EnableSendLike"]:
+            cls.send_like = SendLike(msg_template)
         return cls
