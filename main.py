@@ -74,12 +74,12 @@ class PracticalPluginCollection(Star):
                 logger.debug(f"判断事件类型 {request_type} 失败，将忽略此事件处理。")
                 return False
 
-    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command_group("ban")
     def ban(self):
         """封禁系统功能命令组。"""
 
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.permission_type(filter.PermissionType.ADMIN)
     @ban.command("add")
     async def add_ban(self, event: AstrMessageEvent, user_id: str, reason: str = ""):
         """新增封禁用户。"""
@@ -87,6 +87,8 @@ class PracticalPluginCollection(Star):
             return
         yield self.global_entry.ban.add(event, user_id, reason)
 
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.permission_type(filter.PermissionType.ADMIN)
     @ban.command("remove")
     async def remove_ban(self, event: AstrMessageEvent, user_id: str):
         """解封给定用户。"""
@@ -94,6 +96,8 @@ class PracticalPluginCollection(Star):
             return
         yield self.global_entry.ban.remove(event, user_id)
 
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.permission_type(filter.PermissionType.ADMIN)
     @ban.command("list")
     async def list_ban(self, event: AstrMessageEvent):
         """列出所有封禁用户。"""
