@@ -55,8 +55,3 @@ class SendLike:
             return event.plain_result(
                 self._msg_template.get_msg_template("SendLike", "DailyLimit")
             )
-        except Exception:
-            logger.exception("点赞用户时发生错误。")
-            return event.plain_result(
-                self._msg_template.get_msg_template("General", "UnknownError")
-            )
