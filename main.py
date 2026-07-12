@@ -1,7 +1,8 @@
 from typing import cast
 
+import astrbot.api.message_components as Comp
 from astrbot.api import AstrBotConfig, logger
-from astrbot.api.event import AstrMessageEvent, filter
+from astrbot.api.event import AstrMessageEvent, MessageChain, filter
 from astrbot.api.star import Context, Star, StarTools
 
 from .entry import GlobalEntry
@@ -18,12 +19,6 @@ class PracticalPluginCollection(Star):
         self.plugin_data_path = StarTools.get_data_dir()
         """插件数据目录。"""
 
-    # 这是一个 TODO，计划中会使用该方法去创建定时任务。
-    # 限定 on_platform_loaded 后再创建是为了利用该 Hook 拿到 CQHTTP 平台客户端实例
-    # @filter.on_platform_loaded()
-    # async def scheduled_task(self, event: AstrMessageEvent):
-    #     """定时任务启动器。"""
-
     async def initialize(self):
         """初始化插件。"""
         if not self.config["GlobalEnable"]:
@@ -31,15 +26,50 @@ class PracticalPluginCollection(Star):
                 "插件全局开关已关闭，将不会进行任何操作。如果这不是预期行为，请检查你的插件配置。"
             )
         else:
+            self.msg_template = MessageTemplate(self.config["MessageTemplate"])
             self.global_entry = await GlobalEntry.init(
                 self.plugin_data_path,
                 self.config,
-                MessageTemplate(self.config["MessageTemplate"]),
+                self.msg_template,
             )
             logger.info("插件初始化完成。")
 
     async def terminate(self):
         logger.info("插件已终止。")
+
+    # 这是一个 TODO，计划中会使用该方法去创建定时任务。
+    # 限定 on_platform_loaded 后再创建是为了利用该 Hook 拿到 CQHTTP 平台客户端实例
+    # @filter.on_platform_loaded()
+    # async def scheduled_task(self, event: AstrMessageEvent):
+    #     """定时任务启动器。"""
+
+    @filter.on_plugin_error(priority=1)
+    async def err_handler(
+        self,
+        event: AstrMessageEvent,
+        plugin_name: str,
+        handler_name: str,
+        error: Exception,
+        traceback_text: str,
+    ):
+        """错误处理器。"""
+        if plugin_name != self.name:
+            return
+        event.stop_event()
+        logger.exception(f"{handler_name} 处理事件时发生错误。", exc_info=error)
+        chain = MessageChain(
+            [
+                Comp.Plain(
+                    self.msg_template.get_msg_template(
+                        "General",
+                        "UnknownError",
+                        handler_name=handler_name,
+                        error=str(error),
+                    )
+                )
+            ]
+        )
+        await event.send(chain)
 
     def _event_filter(self, event: AstrMessageEvent) -> bool:
         """事件过滤器。

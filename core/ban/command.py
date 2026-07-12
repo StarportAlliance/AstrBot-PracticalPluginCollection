@@ -47,25 +47,19 @@ class BanSystem(BanSystemCore):
             yield ban_system.add(event, "123456789", "测试封禁")
             ```
         """
-        try:
-            if self.add_ban(user_id, reason):
-                self._config.save_config()
-                logger.info(f"已封禁用户 {user_id}。")
-                return event.plain_result(
-                    self._msg_template.get_msg_template(
-                        "BanSystem", "AddNewBan", user_id=user_id
-                    )
-                )
-            else:
-                return event.plain_result(
-                    self._msg_template.get_msg_template(
-                        "BanSystem", "DuplicateBan", user_id=user_id
-                    )
-                )
-        except Exception:
-            logger.exception("添加封禁用户时发生错误。")
+        if self.add_ban(user_id, reason):
+            self._config.save_config()
+            logger.info(f"已封禁用户 {user_id}。")
             return event.plain_result(
-                self._msg_template.get_msg_template("General", "UnknownError")
+                self._msg_template.get_msg_template(
+                    "BanSystem", "AddNewBan", user_id=user_id
+                )
+            )
+        else:
+            return event.plain_result(
+                self._msg_template.get_msg_template(
+                    "BanSystem", "DuplicateBan", user_id=user_id
+                )
             )
 
     def remove(
@@ -88,20 +82,14 @@ class BanSystem(BanSystemCore):
             yield ban_system.remove(event, "123456789")
             ```
         """
-        try:
-            self.remove_ban(user_id)
-            self._config.save_config()
-            logger.info(f"已解封用户 {user_id}。")
-            return event.plain_result(
-                self._msg_template.get_msg_template(
-                    "BanSystem", "RemoveBan", user_id=user_id
-                )
+        self.remove_ban(user_id)
+        self._config.save_config()
+        logger.info(f"已解封用户 {user_id}。")
+        return event.plain_result(
+            self._msg_template.get_msg_template(
+                "BanSystem", "RemoveBan", user_id=user_id
             )
-        except Exception:
-            logger.exception("移除封禁用户时发生错误。")
-            return event.plain_result(
-                self._msg_template.get_msg_template("General", "UnknownError")
-            )
+        )
 
     def list(
         self,
@@ -121,32 +109,26 @@ class BanSystem(BanSystemCore):
             yield ban_system.list(event)
             ```
         """
-        try:
-            banlist = self.list_ban()
-            if not banlist:
-                return event.plain_result(
-                    self._msg_template.get_msg_template("BanSystem", "BanlistEmpty")
-                )
-            banlist_lines = []
-            for item in banlist:
-                user_id = item["User"]
-                reason = item.get("Reason") or "无"
-                banlist_lines.append(
-                    self._msg_template.get_msg_template(
-                        "BanSystem",
-                        "BanlistFormat",
-                        user_id=user_id,
-                        reason=reason,
-                    )
-                )
-            banlist_str = "".join(banlist_lines)
+        banlist = self.list_ban()
+        if not banlist:
             return event.plain_result(
+                self._msg_template.get_msg_template("BanSystem", "BanlistEmpty")
+            )
+        banlist_lines = []
+        for item in banlist:
+            user_id = item["User"]
+            reason = item.get("Reason") or "无"
+            banlist_lines.append(
                 self._msg_template.get_msg_template(
-                    "BanSystem", "ListBan", banlist=banlist_str
+                    "BanSystem",
+                    "BanlistFormat",
+                    user_id=user_id,
+                    reason=reason,
                 )
             )
-        except Exception:
-            logger.exception("列出封禁用户列表时发生错误。")
-            return event.plain_result(
-                self._msg_template.get_msg_template("General", "UnknownError")
+        banlist_str = "".join(banlist_lines)
+        return event.plain_result(
+            self._msg_template.get_msg_template(
+                "BanSystem", "ListBan", banlist=banlist_str
             )
+        )
