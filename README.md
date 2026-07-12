@@ -15,6 +15,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 帮助菜单
   - [x] 封禁系统
   - [x] 经济系统
+  - [ ] Plugin Pages
   - And More...
 - 模块 (Module) 功能
   - [x] 加群自动审核（group_request_review）：提供了基于正则表达式的加群自动处理功能，能够通过正则判断入群答案从而自动同意/拒绝请求，支持等级/速率限制等筛选条件。
@@ -28,29 +29,26 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 彩票（lottery）
   - [ ] 磕 cp（show_affection）
   - [ ] 入/退群提醒（welcome_goodbye）
+  - [ ] 打劫（robbery）
+  - [ ] 猜单词（wordle）
+  - [ ] 钓鱼（fish）
   - And More...
 
 ## 安装
 
 在 AstrBot 插件管理页面点击右下角 + 按钮（安装插件），选择`从链接安装`，复制粘贴本仓库 URL，点击安装即可。
 
-## 为什么？
+### 更新
 
-原本我是使用 ZeroBot-Plugin (zbp) 的，这个项目是一个 ZeroBot 插件合集，集成了大量插件，从结果来看我其实很认可这个项目。\
-但遗憾的是 zbp 毕竟是基于 ZeroBot 而非 AstrBot，我是不喜欢同时使用两个框架的。\
-此外 zbp 让我无法接受的点是将一个项目分为了超多仓库/module，可能开发团队这么做确有他们的用意，但恕我无法接受改一个功能要翻几个仓库。而且 zbp 还几乎把日志功能当空气，项目几乎没有日志记录，出现错误直接将错误信息发送给用户，好比：
-```py
-except Exception as e:
-    await event.send(e)
-```
-错误堆栈一个没有，上下文也没有日志，报个`ERROR: unknown`我怎么知道问题出在哪里？
-
-综上所述，最终我决定创建这个项目，命名为 PracticalPluginCollection，目标就是打造一个 AstrBot 版本的 zbp。
+很遗憾，AstrBot 目前对 GitHub Release 的支持并不完善，您暂时无法快捷的升降级插件。\
+我们建议您先卸载当前插件但保留插件数据，随后跟随安装教程重新安装本插件，AstrBot 会自动安装 Release 中最新（可能非稳定）版本的插件。\
+或者，您也可以选择插件管理页中插件卡片更多菜单中的重新安装选项，但该选项会强制使用最新 Commit，您可能会安装到尚未完成的开发版本。
 
 ## 鸣谢
 
-- [FloatTech/ZeroBotPlugin](https://github.com/FloatTech/ZeroBot-Plugin) 提供了本项目及部分模块的灵感来源。
-- [Zhalslar/astrbot_plugin_box](https://github.com/Zhalslar/astrbot_plugin_box) 提供了本项目模块 `box` 的灵感来源。
-- [qiqi55488/astrbot_plugin_appreview](https://github.com/qiqi55488/astrbot_plugin_appreview) 提供了本项目模块 `group_request_review` 的灵感来源。
-- [huntuo146/astrbot_plugin_Group-Verification_PRO](https://github.com/huntuo146/astrbot_plugin_Group-Verification_PRO) 提供了本项目模块 `simple_captcha` 的灵感来源。
-- [sealdice/sealdice-core](https://github.com/sealdice/sealdice-core) 提供了本项目模块 `daily_luck` 的灵感来源。
+- [FloatTech/ZeroBotPlugin](https://github.com/FloatTech/ZeroBot-Plugin) - 项目及模块灵感来源
+- [sealdice/sealdice-core](https://github.com/sealdice/sealdice-core) - 模块灵感来源
+- [Zhalslar/astrbot_plugin_box](https://github.com/Zhalslar/astrbot_plugin_box) - 模块灵感来源
+- [qiqi55488/astrbot_plugin_appreview](https://github.com/qiqi55488/astrbot_plugin_appreview) - 模块灵感来源
+- [huntuo146/astrbot_plugin_Group-Verification_PRO](https://github.com/huntuo146/astrbot_plugin_Group-Verification_PRO) - 模块灵感来源
+- [DeepSeek](https://www.deepseek.com) - 技术支持。这里吐槽一下 AstrBot 的开发文档内容部分过时且不全，导致我不得不消耗自己的 Token 跟 AI 探讨框架源码。
