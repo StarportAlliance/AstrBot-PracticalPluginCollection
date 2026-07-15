@@ -25,7 +25,7 @@ class GlobalEntry:
             msg_template (MessageTemplate): 消息模板。
         """
         cls.ban = BanSystem(config, msg_template)
-        cls.economic = await EconomicSystem.init(plugin_data_path)
+        cls.economic = await EconomicSystem.init(plugin_data_path, msg_template)
         if config["ModuleConfig"]["GroupRequestReview"]["Enable"]:
             cls.group_request_review = await GroupRequestReview.initialize(
                 plugin_data_path,

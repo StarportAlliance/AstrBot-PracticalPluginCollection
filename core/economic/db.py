@@ -5,8 +5,8 @@ import aiosqlite
 from astrbot.api import logger
 
 
-class EconomicSystem:
-    """经济系统。"""
+class EconomicSystemDatabase:
+    """经济系统数据库。"""
 
     _db_path: Path
     """数据库文件路径。"""
@@ -14,7 +14,7 @@ class EconomicSystem:
     def __init__(self, plugin_data_path: Path):
         """初始化经济系统静态资源。
 
-        **请使用 EconomicSystem.init 方法初始化完整经济系统。**
+        **请使用 EconomicSystemDatabase.init 方法初始化完整经济系统数据库。**
 
         Args:
             plugin_data_path (Path): 插件数据目录。
@@ -22,23 +22,23 @@ class EconomicSystem:
         self.plugin_data_path = plugin_data_path
         self._db_path = self.plugin_data_path / "core" / "economic.db"
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.debug("经济系统静态资源初始化完成。")
+        logger.debug("经济系统数据库静态资源初始化完成。")
 
     @classmethod
     async def init(cls, plugin_data_path: Path):
-        """初始化经济系统。
+        """初始化经济系统数据库。
 
         Args:
             plugin_data_path (Path): 插件数据目录。
 
         Returns:
-            EconomicSystem: 经济系统实例。
+            EconomicSystemDatabase: 经济系统数据库实例。
 
         Raises:
             Exception: 如果初始化时发生了未知错误。
         """
-        economic_system = cls(plugin_data_path)
-        async with aiosqlite.connect(economic_system._db_path) as db:
+        database = cls(plugin_data_path)
+        async with aiosqlite.connect(database._db_path) as db:
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS account (
                     user_id TEXT PRIMARY KEY,
@@ -47,7 +47,7 @@ class EconomicSystem:
             """)
             await db.commit()
         logger.debug("经济系统数据库初始化完成。")
-        return economic_system
+        return database
 
     @asynccontextmanager
     async def _get_db(self, db_connection: aiosqlite.Connection | None = None):
@@ -114,7 +114,7 @@ class EconomicSystem:
                 return False
         return True
 
-    async def transfer(
+    async def _transfer(
         self,
         payer: str,
         payee: str,
