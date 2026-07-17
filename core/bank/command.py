@@ -225,7 +225,7 @@ class BankSystem(BankSystemDatabase):
             return event.plain_result(
                 self._msg_template.get_msg_template(
                     "BankSystem",
-                    "DeductionSuccess",
+                    "MinusSuccess",
                     target_id=target_id,
                     amount=str(amount),
                     currency_name=self._currency_name,
@@ -281,7 +281,7 @@ class BankSystem(BankSystemDatabase):
             return event.plain_result(
                 self._msg_template.get_msg_template(
                     "BankSystem",
-                    "DepositSuccess",
+                    "AddSuccess",
                     target_id=target_id,
                     amount=str(amount),
                     currency_name=self._currency_name,

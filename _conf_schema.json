@@ -383,17 +383,17 @@
                         "description": "无效转账金额时发送的消息",
                         "default": "转账金额无效。"
                     },
-                    "DeductionSuccess": {
+                    "MinusSuccess": {
                         "type": "string",
-                        "description": "扣款成功时发送的消息",
-                        "hint": "可用占位符有 {target_id}（目标用户 ID），{amount}（扣款金额），{currency_name}（货币名称）。",
-                        "default": "已从 {target_id} 扣款 {amount} {currency_name}。"
+                        "description": "扣除账户余额成功时发送的消息",
+                        "hint": "可用占位符有 {target_id}（目标用户 ID），{amount}（扣除金额），{currency_name}（货币名称）。",
+                        "default": "已从 {target_id} 的账户扣除 {amount} {currency_name}。"
                     },
-                    "DepositSuccess": {
+                    "AddSuccess": {
                         "type": "string",
-                        "description": "入款成功时发送的消息",
-                        "hint": "可用占位符有 {target_id}（目标用户 ID），{amount}（入款金额）。",
-                        "default": "已向 {target_id} 的银行账户增加 {amount} {currency_name}。"
+                        "description": "增加账户余额成功时发送的消息",
+                        "hint": "可用占位符有 {target_id}（目标用户 ID），{amount}（增加金额）。",
+                        "default": "已向 {target_id} 的账户增加 {amount} {currency_name}。"
                     }
                 }
             },

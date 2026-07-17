@@ -143,8 +143,8 @@ class PracticalPluginCollection(Star):
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
-    @bank.command("deduction")
-    async def deduction(self, event: AstrMessageEvent, user_id: str, amount: int):
+    @bank.command("minus")
+    async def minus(self, event: AstrMessageEvent, user_id: str, amount: int):
         """从给定用户银行账户扣除指定金额。"""
         if not self._event_filter(event):
             return
@@ -152,8 +152,8 @@ class PracticalPluginCollection(Star):
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
-    @bank.command("deposit")
-    async def deposit(self, event: AstrMessageEvent, user_id: str, amount: int):
+    @bank.command("add")
+    async def add(self, event: AstrMessageEvent, user_id: str, amount: int):
         """增加给定用户银行账户的余额。"""
         if not self._event_filter(event):
             return
