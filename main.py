@@ -105,59 +105,59 @@ class PracticalPluginCollection(Star):
             return
         yield self.global_entry.ban.list(event)
 
-    @filter.command_group("economic")
-    def economic(self):
-        """经济系统功能命令组。"""
+    @filter.command_group("bank")
+    def bank(self):
+        """银行系统功能命令组。"""
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @economic.command("signup")
-    async def sign_up(self, event: AstrMessageEvent):
-        """注册银行账户。"""
+    @bank.command("create")
+    async def create(self, event: AstrMessageEvent):
+        """创建银行账户。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.sign_up(event)
+        yield self.global_entry.bank.create(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @economic.command("cancel")
-    async def cancel(self, event: AstrMessageEvent):
-        """注销银行账户。"""
+    @bank.command("delete")
+    async def delete(self, event: AstrMessageEvent):
+        """删除银行账户。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.cancel(event)
+        yield self.global_entry.bank.delete(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @economic.command("balance")
+    @bank.command("balance")
     async def balance(self, event: AstrMessageEvent):
         """查询银行账户余额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.balance(event)
+        yield self.global_entry.bank.balance(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
-    @economic.command("transfer")
+    @bank.command("transfer")
     async def transfer(self, event: AstrMessageEvent, user_id: str, amount: int):
         """转账。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.transfer(event, user_id, amount)
+        yield self.global_entry.bank.transfer(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
-    @economic.command("deduction")
+    @bank.command("deduction")
     async def deduction(self, event: AstrMessageEvent, user_id: str, amount: int):
         """从给定用户银行账户扣除指定金额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.deduction(event, user_id, amount)
+        yield self.global_entry.bank.minus(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
-    @economic.command("deposit")
+    @bank.command("deposit")
     async def deposit(self, event: AstrMessageEvent, user_id: str, amount: int):
         """增加给定用户银行账户的余额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.economic.deposit(event, user_id, amount)
+        yield self.global_entry.bank.add(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     async def group_request_review(self, event: AstrMessageEvent):

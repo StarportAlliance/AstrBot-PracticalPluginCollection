@@ -14,7 +14,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
 - 核心 (Core) 功能
   - [ ] 帮助菜单
   - [x] 封禁系统
-  - [x] 经济系统
+  - [x] 银行系统
   - [ ] Plugin Pages
   - And More...
 - 模块 (Module) 功能

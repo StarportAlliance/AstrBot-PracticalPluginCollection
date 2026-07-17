@@ -1,4 +1,4 @@
 from .ban.command import BanSystem
-from .economic.command import EconomicSystem
+from .bank.command import BankSystem
 
-__all__ = ["BanSystem", "EconomicSystem"]
+__all__ = ["BanSystem", "BankSystem"]

@@ -5,37 +5,34 @@ import aiosqlite
 from astrbot.api import logger
 
 
-class EconomicSystemDatabase:
-    """经济系统数据库。"""
+class BankSystemDatabase:
+    """银行系统数据库。"""
 
     _db_path: Path
     """数据库文件路径。"""
 
     def __init__(self, plugin_data_path: Path):
-        """初始化经济系统静态资源。
+        """初始化银行系统静态资源。
 
-        **请使用 EconomicSystemDatabase.init 方法初始化完整经济系统数据库。**
+        **请使用 BankSystemDatabase.init 方法初始化完整银行系统数据库。**
 
         Args:
             plugin_data_path (Path): 插件数据目录。
         """
         self.plugin_data_path = plugin_data_path
-        self._db_path = self.plugin_data_path / "core" / "economic.db"
+        self._db_path = self.plugin_data_path / "core" / "bank.db"
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.debug("经济系统数据库静态资源初始化完成。")
+        logger.debug("银行系统数据库静态资源初始化完成。")
 
     @classmethod
     async def init(cls, plugin_data_path: Path):
-        """初始化经济系统数据库。
+        """初始化银行系统数据库。
 
         Args:
             plugin_data_path (Path): 插件数据目录。
 
         Returns:
-            EconomicSystemDatabase: 经济系统数据库实例。
-
-        Raises:
-            Exception: 如果初始化时发生了未知错误。
+            BankSystemDatabase: 银行系统数据库实例。
         """
         database = cls(plugin_data_path)
         async with aiosqlite.connect(database._db_path) as db:
@@ -46,7 +43,7 @@ class EconomicSystemDatabase:
                 )
             """)
             await db.commit()
-        logger.debug("经济系统数据库初始化完成。")
+        logger.debug("银行系统数据库初始化完成。")
         return database
 
     @asynccontextmanager
@@ -67,7 +64,7 @@ class EconomicSystemDatabase:
                 pass
             ```
         """
-        if db_connection is None:
+        if not db_connection:
             async with aiosqlite.connect(self._db_path) as db:
                 yield db
         else:
@@ -77,7 +74,7 @@ class EconomicSystemDatabase:
         """新增账户。
 
         Args:
-            user_id (str): 要注册的用户 ID。
+            user_id (str): 要创建的用户 ID。
 
         Raises:
             aiosqlite.IntegrityError: 如果用户 ID 已拥有银行账户。
@@ -114,7 +111,7 @@ class EconomicSystemDatabase:
                 return False
         return True
 
-    async def _transfer(
+    async def transfer_balance(
         self,
         payer: str,
         payee: str,

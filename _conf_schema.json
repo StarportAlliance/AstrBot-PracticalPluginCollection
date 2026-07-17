@@ -321,9 +321,9 @@
                     }
                 }
             },
-            "EconomicSystem": {
+            "BankSystem": {
                 "type": "object",
-                "description": "经济系统",
+                "description": "银行系统",
                 "items": {
                     "CurrencyName": {
                         "type": "string",
@@ -333,12 +333,12 @@
                     "SelfAccountNotFound": {
                         "type": "string",
                         "description": "自身账户不存在时发送的消息",
-                        "default": "未找到你的银行账户，请先注册。"
+                        "default": "未找到你的银行账户，请先创建。"
                     },
                     "TargetAccountNotFound": {
                         "type": "string",
                         "description": "目标账户不存在时发送的消息",
-                        "default": "找不到目标的银行账户，请检查目标是否已进行注册。"
+                        "default": "找不到目标的银行账户，请检查目标是否已进行创建。"
                     },
                     "InvalidAmount": {
                         "type": "string",
@@ -347,24 +347,24 @@
                     },
                     "SignUpSuccess": {
                         "type": "string",
-                        "description": "注册成功时发送的消息",
-                        "default": "注册成功！"
+                        "description": "创建成功时发送的消息",
+                        "default": "创建成功！"
                     },
                     "DuplicateAccount": {
                         "type": "string",
-                        "description": "重复注册时发送的消息",
-                        "default": "你已经注册过账户了。"
+                        "description": "重复创建时发送的消息",
+                        "default": "你已经创建过账户了。"
                     },
-                    "RejectCancelByBalance": {
+                    "RejectDeleteByBalance": {
                         "type": "string",
                         "description": "因账户内有余额而注销失败时发送的消息",
                         "hint": "可用占位符有 {balance}（余额），{currency_name}（货币名称）。",
                         "default": "你的账户内仍剩余 {balance} {currency_name}，无法注销账户。"
                     },
-                    "CancelSuccess": {
+                    "DeleteSuccess": {
                         "type": "string",
-                        "description": "注销成功时发送的消息",
-                        "default": "注销成功。"
+                        "description": "删除账户成功时发送的消息",
+                        "default": "删除成功。"
                     },
                     "AccountBalance": {
                         "type": "string",
