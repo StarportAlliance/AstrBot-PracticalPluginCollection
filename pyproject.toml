@@ -1,6 +1,6 @@
 [project]
 name = "AstrBot-Practical-Plugin-Collection"
-version = "0.4.0"
+version = "0.5.0"
 description = "AstrBot 实用插件合集"
 readme = "README.md"
 requires-python = "~=3.12.0"
