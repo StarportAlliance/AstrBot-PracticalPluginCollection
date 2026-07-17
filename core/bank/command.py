@@ -23,6 +23,7 @@ class BankSystem(BankSystemDatabase):
         bank._currency_name = bank._msg_template.get_msg_template(
             "BankSystem", "CurrencyName"
         )
+        logger.info("银行系统初始化完成。")
         return bank
 
     async def create(self, event: AstrMessageEvent) -> MessageEventResult:
