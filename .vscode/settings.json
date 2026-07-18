@@ -7,5 +7,6 @@
             ],
             "url": "./.vscode/AstrBotPluginConfig.schema.json"
         }
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "standard"
 }
