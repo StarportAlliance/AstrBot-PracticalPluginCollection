@@ -115,7 +115,7 @@ class PracticalPluginCollection(Star):
         """创建银行账户。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.create(event)
+        yield await self.global_entry.bank.create(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @bank.command("delete")
@@ -123,7 +123,7 @@ class PracticalPluginCollection(Star):
         """删除银行账户。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.delete(event)
+        yield await self.global_entry.bank.delete(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @bank.command("balance")
@@ -131,7 +131,7 @@ class PracticalPluginCollection(Star):
         """查询银行账户余额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.balance(event)
+        yield await self.global_entry.bank.balance(event)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @bank.command("transfer")
@@ -139,7 +139,7 @@ class PracticalPluginCollection(Star):
         """转账。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.transfer(event, user_id, amount)
+        yield await self.global_entry.bank.transfer(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
@@ -148,7 +148,7 @@ class PracticalPluginCollection(Star):
         """从给定用户银行账户扣除指定金额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.minus(event, user_id, amount)
+        yield await self.global_entry.bank.minus(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     @filter.permission_type(filter.PermissionType.ADMIN)
@@ -157,7 +157,7 @@ class PracticalPluginCollection(Star):
         """增加给定用户银行账户的余额。"""
         if not self._event_filter(event):
             return
-        yield self.global_entry.bank.add(event, user_id, amount)
+        yield await self.global_entry.bank.add(event, user_id, amount)
 
     @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
     async def group_request_review(self, event: AstrMessageEvent):
