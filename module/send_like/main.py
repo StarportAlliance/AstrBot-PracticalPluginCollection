@@ -46,9 +46,10 @@ class SendLike:
             return event.plain_result(
                 self._msg_template.get_msg_template("SendLike", "InvalidTimes")
             )
-        except aiocqhttp.exceptions.ActionFailed:
+        except aiocqhttp.exceptions.ActionFailed as e:
             # 目前全部假定 ActionFailed 是因为点赞次数达每日上限，这里写个 debug log 便于排查其他未知问题
-            logger.debug("OneBot API 返回失败响应。", exc_info=True)
+            # 不记录完整堆栈信息
+            logger.debug(f"OneBot API 返回失败响应：{e}")
             logger.info(
                 f"对用户 {event.get_sender_id()} 的点赞次数已达今日上限，拒绝点赞请求。"
             )
