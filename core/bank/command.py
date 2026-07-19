@@ -8,23 +8,27 @@ from ...utils.message import MessageTemplate
 from .db import BankSystemDatabase
 
 
-class BankSystem(BankSystemDatabase):
+class BankSystem:
     """银行系统。"""
 
+    core: BankSystemDatabase
+    """银行系统核心。"""
     _msg_template: MessageTemplate
-
+    """消息模板。"""
     _currency_name: str
+    """货币名称。"""
 
     @classmethod
     async def init(cls, plugin_data_path: Path, msg_template: MessageTemplate):  # pyright: ignore[reportIncompatibleMethodOverride]
         """初始化银行系统。"""
-        bank = await super().init(plugin_data_path)
-        bank._msg_template = msg_template
-        bank._currency_name = bank._msg_template.get_msg_template(
+        self = cls()
+        self.core = await BankSystemDatabase.init(plugin_data_path)
+        self._msg_template = msg_template
+        self._currency_name = self._msg_template.get_msg_template(
             "BankSystem", "CurrencyName"
         )
         logger.info("银行系统初始化完成。")
-        return bank
+        return self
 
     async def create(self, event: AstrMessageEvent) -> MessageEventResult:
         """创建银行账户。
@@ -41,7 +45,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            await self.create_account(event.get_sender_id())
+            await self.core.create_account(event.get_sender_id())
             logger.info(f"用户 {event.get_sender_id()} 创建了银行账户。")
             return event.plain_result(
                 self._msg_template.get_msg_template("BankSystem", "SignUpSuccess")
@@ -72,7 +76,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            balance = await self.get_balance(event.get_sender_id())
+            balance = await self.core.get_balance(event.get_sender_id())
             if balance > 0:
                 logger.info(
                     f"用户 {event.get_sender_id()} 银行账户内仍有余额，拒绝删除账户。"
@@ -85,7 +89,7 @@ class BankSystem(BankSystemDatabase):
                         currency_name=self._currency_name,
                     )
                 )
-            if not await self.delete_account(event.get_sender_id()):
+            if not await self.core.delete_account(event.get_sender_id()):
                 logger.info(
                     f"用户 {event.get_sender_id()} 未创建银行账户，拒绝删除账户。"
                 )
@@ -119,7 +123,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            balance = await self.get_balance(event.get_sender_id())
+            balance = await self.core.get_balance(event.get_sender_id())
             return event.plain_result(
                 self._msg_template.get_msg_template(
                     "BankSystem",
@@ -160,7 +164,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            await self.transfer_balance(event.get_sender_id(), target_id, amount)
+            await self.core.transfer_balance(event.get_sender_id(), target_id, amount)
             logger.info(
                 f"用户 {event.get_sender_id()} 向用户 {target_id} 转账了 {amount} {self._currency_name}。"
             )
@@ -218,7 +222,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            await self.reduce_balance(target_id, amount)
+            await self.core.reduce_balance(target_id, amount)
             logger.info(
                 f"用户 {event.get_sender_id()} 扣除了用户 {target_id} 银行账户余额 {amount} {self._currency_name}。"
             )
@@ -274,7 +278,7 @@ class BankSystem(BankSystemDatabase):
             ```
         """
         try:
-            await self.increase_balance(target_id, amount)
+            await self.core.increase_balance(target_id, amount)
             logger.info(
                 f"用户 {event.get_sender_id()} 增加了用户 {target_id} 银行账户余额 {amount} {self._currency_name}。"
             )

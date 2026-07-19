@@ -5,13 +5,15 @@ from ...utils.message import MessageTemplate
 from .main import BanSystemCore
 
 
-class BanSystem(BanSystemCore):
+class BanSystem:
     """封禁系统。"""
 
+    core: BanSystemCore
+    """封禁系统核心。"""
     _msg_template: MessageTemplate
-    """消息模板类。"""
+    """消息模板。"""
     _config: AstrBotConfig
-    """插件配置对象。"""
+    """插件配置。"""
 
     def __init__(self, config: AstrBotConfig, msg_template: MessageTemplate):
         """初始化封禁系统。
@@ -20,7 +22,7 @@ class BanSystem(BanSystemCore):
             config (AstrBotConfig): 插件配置对象。
             msg_template (MessageTemplate): 消息模板类。
         """
-        super().__init__(config["CoreConfig"]["BanSystem"])
+        self.core = BanSystemCore(config["CoreConfig"]["BanSystem"])
         self._msg_template = msg_template
         self._config = config
         logger.info("封禁系统初始化完成。")
@@ -48,7 +50,7 @@ class BanSystem(BanSystemCore):
             ```
         """
         try:
-            if self.add_ban(user_id, reason):
+            if self.core.add_ban(user_id, reason):
                 self._config.save_config()
                 logger.info(f"已封禁用户 {user_id}。")
                 return event.plain_result(
@@ -89,7 +91,7 @@ class BanSystem(BanSystemCore):
             ```
         """
         try:
-            self.remove_ban(user_id)
+            self.core.remove_ban(user_id)
             self._config.save_config()
             logger.info(f"已解封用户 {user_id}。")
             return event.plain_result(
@@ -122,7 +124,7 @@ class BanSystem(BanSystemCore):
             ```
         """
         try:
-            banlist = self.list_ban()
+            banlist = self.core.list_ban()
             if not banlist:
                 return event.plain_result(
                     self._msg_template.get_msg_template("BanSystem", "BanlistEmpty")

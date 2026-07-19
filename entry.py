@@ -11,7 +11,7 @@ class GlobalEntry:
     """全局统一调用入口。"""
 
     @classmethod
-    async def init(  # type: ignore
+    async def init(
         cls,
         plugin_data_path: Path,
         config: AstrBotConfig,
@@ -27,7 +27,7 @@ class GlobalEntry:
         cls.ban = BanSystem(config, msg_template)
         cls.bank = await BankSystem.init(plugin_data_path, msg_template)
         if config["ModuleConfig"]["GroupRequestReview"]["Enable"]:
-            cls.group_request_review = await GroupRequestReview.initialize(
+            cls.group_request_review = await GroupRequestReview.init(
                 plugin_data_path,
                 msg_template,
                 config["ModuleConfig"]["GroupRequestReview"],

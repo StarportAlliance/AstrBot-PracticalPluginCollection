@@ -17,9 +17,11 @@ from ...utils.message import MessageTemplate
 from .log import GroupRequestLog
 
 
-class GroupRequestReview(GroupRequestLog):
+class GroupRequestReview:
     """加群请求审核模块。"""
 
+    _log: GroupRequestLog
+    """加群请求数据库。"""
     _message_template: MessageTemplate
     """消息模板。"""
     _module_config: dict
@@ -28,7 +30,7 @@ class GroupRequestReview(GroupRequestLog):
     """封禁系统。"""
 
     @classmethod
-    async def initialize(
+    async def init(
         cls,
         plugin_data_path: Path,
         message_template: MessageTemplate,
@@ -46,7 +48,8 @@ class GroupRequestReview(GroupRequestLog):
         Returns:
             GroupRequestReview: 模块实例。
         """
-        self = await super().init(plugin_data_path)
+        self = cls()
+        self._log = await GroupRequestLog.init(plugin_data_path)
         self._message_template = message_template
         self._module_config = module_config
         self._ban_system = ban_system
@@ -102,7 +105,7 @@ class GroupRequestReview(GroupRequestLog):
 
         # 主要判断逻辑部分
         if group_config["UseBanlist"]:
-            if self._ban_system.check_user_is_banned(user_id):
+            if self._ban_system.core.check_user_is_banned(user_id):
                 logger.info(f"用户 {user_id} 已被封禁，将拒绝其加群请求。")
                 await self._handle_request(
                     event,
@@ -120,7 +123,7 @@ class GroupRequestReview(GroupRequestLog):
             cutoff_time = (
                 datetime.now() - timedelta(minutes=statistical_time)
             ).strftime("%Y-%m-%d %H:%M:%S")
-            recent_requests = await self.get_requests(user_id, cutoff_time)
+            recent_requests = await self._log.get_requests(user_id, cutoff_time)
             if len(recent_requests) >= total_attempt:
                 logger.info(
                     f"用户 {user_id} 在 {statistical_time} 分钟内请求 {len(recent_requests)} 次，超过上限 {total_attempt}，将拒绝其加群请求。"
@@ -147,7 +150,7 @@ class GroupRequestReview(GroupRequestLog):
                 )
                 return
             # 即使没有通过下面的其他限制也需要计入请求次数
-            await self.add_request(user_id)
+            await self._log.add_request(user_id)
         level_limit = cast(dict, group_config["LevelLimit"])
         if level_limit["MinLevel"] > 0:
             member_info = await ProtocolEndApi.get_stranger_info(
