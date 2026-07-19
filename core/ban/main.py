@@ -45,7 +45,12 @@ class BanSystemCore:
 
         Args:
             user_id (str): 用户 ID。
+
+        Raises:
+            ValueError: 如果用户未被封禁。
         """
+        if not any(item["User"] == user_id for item in self._ban_list):
+            raise ValueError(f"用户 {user_id} 未被封禁，无法移除。")
         self._ban_list = [item for item in self._ban_list if item["User"] != user_id]
         self._config.save_config()
 
