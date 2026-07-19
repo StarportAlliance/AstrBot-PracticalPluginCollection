@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from astrbot.api import AstrBotConfig
+from astrbot.api import AstrBotConfig, logger
 
 from .core import BankSystem, BanSystem
 from .module import GroupRequestReview, SendLike
@@ -26,6 +26,7 @@ class GlobalEntry:
         """
         cls.ban = BanSystem(config, msg_template)
         cls.bank = await BankSystem.init(plugin_data_path, msg_template)
+        logger.info("插件核心功能初始化完成。")
         if config["ModuleConfig"]["GroupRequestReview"]["Enable"]:
             cls.group_request_review = await GroupRequestReview.init(
                 plugin_data_path,
@@ -35,4 +36,5 @@ class GlobalEntry:
             )
         if config["ModuleConfig"]["EnableSendLike"]:
             cls.send_like = SendLike(msg_template)
+        logger.info("插件模块功能初始化完成。")
         return cls

@@ -24,7 +24,7 @@ class BanSystem:
         """
         self.core = BanSystemCore(config)
         self._msg_template = msg_template
-        logger.info("封禁系统初始化完成。")
+        logger.debug("封禁系统初始化完成。")
 
     def add(
         self,

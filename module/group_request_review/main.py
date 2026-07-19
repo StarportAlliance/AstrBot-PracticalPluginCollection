@@ -48,12 +48,13 @@ class GroupRequestReview:
         Returns:
             GroupRequestReview: 模块实例。
         """
-        self = cls()
-        self._log = await GroupRequestLog.init(plugin_data_path)
-        self._message_template = message_template
-        self._module_config = module_config
-        self._ban_system = ban_system
-        return self
+        ins = cls()
+        ins._log = await GroupRequestLog.init(plugin_data_path)
+        ins._message_template = message_template
+        ins._module_config = module_config
+        ins._ban_system = ban_system
+        logger.debug("加群请求审核模块初始化完成。")
+        return ins
 
     async def handle_request_review(
         self,

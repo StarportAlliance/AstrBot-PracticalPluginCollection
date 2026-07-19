@@ -11,19 +11,6 @@ class BankSystemDatabase:
     _db_path: Path
     """数据库文件路径。"""
 
-    def __init__(self, plugin_data_path: Path):
-        """初始化银行系统静态资源。
-
-        **请使用 BankSystemDatabase.init 方法初始化完整银行系统数据库。**
-
-        Args:
-            plugin_data_path (Path): 插件数据目录。
-        """
-        self.plugin_data_path = plugin_data_path
-        self._db_path = self.plugin_data_path / "core" / "bank.db"
-        self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.debug("银行系统数据库静态资源初始化完成。")
-
     @classmethod
     async def init(cls, plugin_data_path: Path):
         """初始化银行系统数据库。
@@ -34,8 +21,10 @@ class BankSystemDatabase:
         Returns:
             BankSystemDatabase: 银行系统数据库实例。
         """
-        database = cls(plugin_data_path)
-        async with aiosqlite.connect(database._db_path) as db:
+        ins = cls()
+        ins._db_path = plugin_data_path / "core" / "bank.db"
+        ins._db_path.parent.mkdir(parents=True, exist_ok=True)
+        async with aiosqlite.connect(ins._db_path) as db:
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS account (
                     user_id TEXT PRIMARY KEY,
@@ -44,7 +33,7 @@ class BankSystemDatabase:
             """)
             await db.commit()
         logger.debug("银行系统数据库初始化完成。")
-        return database
+        return ins
 
     @asynccontextmanager
     async def _get_db(self, db_connection: aiosqlite.Connection | None = None):

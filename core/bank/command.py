@@ -21,14 +21,14 @@ class BankSystem:
     @classmethod
     async def init(cls, plugin_data_path: Path, msg_template: MessageTemplate):  # pyright: ignore[reportIncompatibleMethodOverride]
         """初始化银行系统。"""
-        self = cls()
-        self.core = await BankSystemDatabase.init(plugin_data_path)
-        self._msg_template = msg_template
-        self._currency_name = self._msg_template.get_msg_template(
+        ins = cls()
+        ins.core = await BankSystemDatabase.init(plugin_data_path)
+        ins._msg_template = msg_template
+        ins._currency_name = ins._msg_template.get_msg_template(
             "BankSystem", "CurrencyName"
         )
-        logger.info("银行系统初始化完成。")
-        return self
+        logger.debug("银行系统初始化完成。")
+        return ins
 
     async def create(self, event: AstrMessageEvent) -> MessageEventResult:
         """创建银行账户。

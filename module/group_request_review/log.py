@@ -19,21 +19,6 @@ class GroupRequestLog:
         request_time: str
         user_id: str
 
-    def __init__(self, plugin_data_path: Path):
-        """初始化加群请求记录数据库静态资源。
-
-        **请使用 GroupRequestLog.init 方法初始化完整加群请求记录数据库。**
-
-        Args:
-            plugin_data_path (Path): 插件数据目录。
-        """
-        self.plugin_data_path = plugin_data_path
-        self._db_path = (
-            self.plugin_data_path / "module" / "group_request_review" / "log.db"
-        )
-        self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.debug("加群请求记录数据库静态资源初始化完成。")
-
     @classmethod
     async def init(cls, plugin_data_path: Path):
         """初始化加群请求记录数据库。
@@ -44,8 +29,10 @@ class GroupRequestLog:
         Returns:
             GroupRequestLog: 加群请求记录数据库实例。
         """
-        log = cls(plugin_data_path)
-        async with aiosqlite.connect(log._db_path) as db:
+        ins = cls()
+        ins._db_path = plugin_data_path / "module" / "group_request_review" / "log.db"
+        ins._db_path.parent.mkdir(parents=True, exist_ok=True)
+        async with aiosqlite.connect(ins._db_path) as db:
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS request_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +46,7 @@ class GroupRequestLog:
             """)
             await db.commit()
         logger.debug("加群请求记录数据库初始化完成。")
-        return log
+        return ins
 
     async def add_request(self, user_id: str):
         """写入加群请求记录。

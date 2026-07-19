@@ -13,6 +13,7 @@ class SendLike:
 
     def __init__(self, msg_template: MessageTemplate) -> None:
         self._msg_template = msg_template
+        logger.debug("赞我模块初始化完成。")
 
     async def like(
         self, event: AstrMessageEvent, times: int = 10
