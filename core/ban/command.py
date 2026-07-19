@@ -22,9 +22,8 @@ class BanSystem:
             config (AstrBotConfig): 插件配置对象。
             msg_template (MessageTemplate): 消息模板类。
         """
-        self.core = BanSystemCore(config["CoreConfig"]["BanSystem"])
+        self.core = BanSystemCore(config)
         self._msg_template = msg_template
-        self._config = config
         logger.info("封禁系统初始化完成。")
 
     def add(
@@ -50,20 +49,20 @@ class BanSystem:
             ```
         """
         try:
-            if self.core.add_ban(user_id, reason):
-                self._config.save_config()
-                logger.info(f"已封禁用户 {user_id}。")
-                return event.plain_result(
-                    self._msg_template.get_msg_template(
-                        "BanSystem", "AddNewBan", user_id=user_id
-                    )
+            self.core.add_ban(user_id, reason)
+            logger.info(f"{event.get_sender_id()} 封禁了用户 {user_id}。")
+            return event.plain_result(
+                self._msg_template.get_msg_template(
+                    "BanSystem", "AddNewBan", user_id=user_id
                 )
-            else:
-                return event.plain_result(
-                    self._msg_template.get_msg_template(
-                        "BanSystem", "DuplicateBan", user_id=user_id
-                    )
+            )
+        except ValueError:
+            logger.info(f"用户 {user_id} 已被封禁，拒绝重复封禁。")
+            return event.plain_result(
+                self._msg_template.get_msg_template(
+                    "BanSystem", "DuplicateBan", user_id=user_id
                 )
+            )
         except Exception:
             logger.exception("添加封禁用户时发生错误。")
             return event.plain_result(
@@ -92,11 +91,17 @@ class BanSystem:
         """
         try:
             self.core.remove_ban(user_id)
-            self._config.save_config()
-            logger.info(f"已解封用户 {user_id}。")
+            logger.info(f"{event.get_sender_id()} 解封了用户 {user_id}。")
             return event.plain_result(
                 self._msg_template.get_msg_template(
                     "BanSystem", "RemoveBan", user_id=user_id
+                )
+            )
+        except ValueError:
+            logger.info(f"用户 {user_id} 未被封禁，无需解封。")
+            return event.plain_result(
+                self._msg_template.get_msg_template(
+                    "BanSystem", "BannedUserNotFound", user_id=user_id
                 )
             )
         except Exception:

@@ -302,6 +302,12 @@
                         "hint": "可用占位符有 {user_id}（用户 ID）。",
                         "default": "移除封禁用户 {user_id} 成功。"
                     },
+                    "BannedUserNotFound": {
+                        "type": "string",
+                        "description": "解除封禁用户不存在时发送的消息",
+                        "hint": "可用占位符有 {user_id}（用户 ID）。",
+                        "default": "用户 {user_id} 未被封禁，无需解封。"
+                    },
                     "ListBan": {
                         "type": "string",
                         "description": "列出封禁用户列表时发送的消息",
