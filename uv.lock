@@ -241,22 +241,22 @@ version = "0.5.1"
 source = { virtual = "." }
 dependencies = [
     { name = "aiosqlite" },
-    { name = "astrbot" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "astrbot" },
     { name = "ruff" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "aiosqlite", specifier = ">=0.22.1" },
-    { name = "astrbot", specifier = ">=4.17.6" },
-]
+requires-dist = [{ name = "aiosqlite", specifier = ">=0.22.1" }]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.15.13" }]
+dev = [
+    { name = "astrbot", specifier = ">=4.17.6,<4.27.0" },
+    { name = "ruff", specifier = ">=0.15.13" },
+]
 
 [[package]]
 name = "attrs"
