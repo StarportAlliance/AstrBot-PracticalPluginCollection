@@ -262,6 +262,11 @@
                 "type": "bool",
                 "description": "启用赞我模块",
                 "default": false
+            },
+            "EnableWelcomeGoodbye": {
+                "type": "bool",
+                "description": "启用进退群提醒模块",
+                "default": false
             }
         }
     },
@@ -459,6 +464,92 @@
                         "type": "string",
                         "description": "点赞次数达每日上限时发送的消息",
                         "default": "点赞次数已达今日上限。"
+                    }
+                }
+            },
+            "WelcomeGoodbye": {
+                "type": "object",
+                "description": "进退群提醒",
+                "items": {
+                    "WelcomeMsg": {
+                        "type": "template_list",
+                        "description": "欢迎消息配置",
+                        "templates": {
+                            "Dedicated": {
+                                "name": "专用欢迎消息",
+                                "hint": "专用于指定群聊的欢迎消息。",
+                                "display_item": "TargetGroup",
+                                "hide_hint_in_list": true,
+                                "items": {
+                                    "TargetGroup": {
+                                        "type": "string",
+                                        "description": "目标群聊 ID",
+                                        "hint": "要使用此欢迎消息的群聊。"
+                                    },
+                                    "Message": {
+                                        "type": "text",
+                                        "description": "欢迎消息",
+                                        "hint": "机器人将发送的欢迎消息。可用占位符有：{at_user}（@入群者）、{user_id}（用户 ID）、{user_name}（用户昵称）。"
+                                    }
+                                }
+                            },
+                            "Common": {
+                                "name": "通用欢迎消息",
+                                "hint": "所有未配置专用欢迎消息群聊通用的欢迎消息，该消息应当仅添加一个。",
+                                "items": {
+                                    "Message": {
+                                        "type": "text",
+                                        "description": "欢迎消息",
+                                        "hint": "机器人将发送的欢迎消息。可用占位符有：{at_user}（@入群者）、{user_id}（用户 ID）、{user_name}（用户昵称）。"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "GoodbyeMsg": {
+                        "type": "template_list",
+                        "description": "退群提醒消息配置",
+                        "templates": {
+                            "Dedicated": {
+                                "name": "专用退群提醒消息",
+                                "hint": "专用于指定群聊的退群提醒消息。",
+                                "display_item": "TargetGroup",
+                                "hide_hint_in_list": true,
+                                "items": {
+                                    "TargetGroup": {
+                                        "type": "string",
+                                        "description": "目标群聊 ID",
+                                        "hint": "要使用此退群提醒消息的群聊。"
+                                    },
+                                    "LeaveMessage": {
+                                        "type": "text",
+                                        "description": "主动退群提醒消息",
+                                        "hint": "群成员主动退群时机器人将发送的提醒信息，可用占位符有：{user_id}（用户 ID）、{user_name}（用户昵称）。"
+                                    },
+                                    "KickMessage": {
+                                        "type": "text",
+                                        "description": "被踢提醒消息",
+                                        "hint": "群成员被管理员踢出群时机器人将发送的提醒信息，可用占位符有：{user_id}（用户 ID）、{user_name}（用户昵称）、{operator_id}（操作者 ID）、{operator_name}（操作者昵称）。"
+                                    }
+                                }
+                            },
+                            "Common": {
+                                "name": "通用退群提醒消息",
+                                "hint": "所有未配置专用退群提醒消息的群聊通用的退群提醒消息，该消息应当仅添加一个。",
+                                "items": {
+                                    "LeaveMessage": {
+                                        "type": "text",
+                                        "description": "主动退群提醒消息",
+                                        "hint": "群成员主动退群时机器人将发送的提醒信息，可用占位符有：{user_id}（用户 ID）、{user_name}（用户昵称）。"
+                                    },
+                                    "KickMessage": {
+                                        "type": "text",
+                                        "description": "被踢提醒消息",
+                                        "hint": "群成员被管理员踢出群时机器人将发送的提醒信息，可用占位符有：{user_id}（用户 ID）、{user_name}（用户昵称）、{operator_id}（操作者 ID）、{operator_name}（操作者昵称）。"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -3,7 +3,7 @@ from pathlib import Path
 from astrbot.api import AstrBotConfig, logger
 
 from .core import BankSystem, BanSystem
-from .module import GroupRequestReview, SendLike
+from .module import GroupRequestReview, SendLike, WelcomeGoodbye
 from .utils.message.msg import MessageTemplate
 
 
@@ -36,5 +36,9 @@ class GlobalEntry:
             )
         if config["ModuleConfig"]["EnableSendLike"]:
             cls.send_like = SendLike(msg_template)
+        if config["ModuleConfig"]["EnableWelcomeGoodbye"]:
+            cls.welcome_goodbye = WelcomeGoodbye(
+                config["MessageTemplate"]["WelcomeGoodbye"]
+            )
         logger.info("插件模块功能初始化完成。")
         return cls

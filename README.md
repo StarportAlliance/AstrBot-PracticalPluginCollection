@@ -28,7 +28,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 签到（check_in）
   - [ ] 彩票（lottery）
   - [ ] 磕 cp（show_affection）
-  - [ ] 入/退群提醒（welcome_goodbye）
+  - [x] 进退群提醒（welcome_goodbye）：在有成员进退群时发送消息提醒用作欢迎等用途，支持为不同群聊设定不同文本。
   - [ ] 打劫（robbery）
   - [ ] 猜单词（wordle）
   - [ ] 钓鱼（fish）

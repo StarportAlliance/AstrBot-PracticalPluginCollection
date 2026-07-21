@@ -177,3 +177,14 @@ class PracticalPluginCollection(Star):
         if not self.module_config["EnableSendLike"]:
             return
         yield await self.global_entry.send_like.like(event, times)
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    async def welcome_goodbye(self, event: AstrMessageEvent):
+        """进退群提醒模块事件接收器。"""
+        if not self._event_filter(event):
+            return
+        if not self.module_config["EnableWelcomeGoodbye"]:
+            return
+        result = await self.global_entry.welcome_goodbye.handle_event(event)
+        if result:
+            yield result
