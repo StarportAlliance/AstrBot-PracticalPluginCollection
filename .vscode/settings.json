@@ -8,5 +8,17 @@
             "url": "./.vscode/AstrBotPluginConfig.schema.json"
         }
     ],
-    "python.analysis.typeCheckingMode": "standard"
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "always"
+        }
+    },
+    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "astrbot",
+            "depth": 5,
+            "includeAllSymbols": false
+        }
+    ]
 }
