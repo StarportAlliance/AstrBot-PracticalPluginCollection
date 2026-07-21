@@ -133,6 +133,7 @@ async def event_listener(self, event: AstrMessageEvent):
         ...
     except Exception:
         logger.exception(f"xxx 时发生错误。")
+        return
 ```
 
 #### 日志输出
@@ -151,7 +152,7 @@ async def event_listener(self, event: AstrMessageEvent):
 #### 属性访问
 
 访问对象固定（已知）属性时使用点号操作符（`.`），否则均使用方括号（`[]`）。
-仅当访问对象**确定可能为空**时才使用 `.get()` 方法，且通过该方法仅是为了不报错，不应作为回滚值。
+仅当访问对象**确定可能为空**时才使用 `.get()` 方法，且通过该方法应仅是为了不报错，而非作为回滚值使用。
 
 ### 规则豁免
 
