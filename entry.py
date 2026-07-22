@@ -4,6 +4,7 @@ from astrbot.api import AstrBotConfig, logger
 
 from .core import BankSystem, BanSystem
 from .module import GroupRequestReview, SendLike, WelcomeGoodbye
+from .module.daily_luck.main import DailyLuck
 from .utils.message.msg import MessageTemplate
 
 
@@ -39,6 +40,12 @@ class GlobalEntry:
         if config["ModuleConfig"]["EnableWelcomeGoodbye"]:
             cls.welcome_goodbye = WelcomeGoodbye(
                 config["MessageTemplate"]["WelcomeGoodbye"]
+            )
+        if config["ModuleConfig"]["EnableDailyLuck"]:
+            cls.daily_luck = await DailyLuck.init(
+                msg_template,
+                config["MessageTemplate"]["DailyLuck"],
+                plugin_data_path,
             )
         logger.info("插件模块功能初始化完成。")
         return cls

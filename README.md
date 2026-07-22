@@ -21,7 +21,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [x] 加群自动审核（group_request_review）：提供了基于正则表达式的加群自动处理功能，能够通过正则判断入群答案从而自动同意/拒绝请求，支持等级/速率限制等筛选条件。
   - [ ] 简易入群人机验证（simple_captcha）
   - [ ] 群老婆（qq_wife）
-  - [ ] 今日人品（daily_luck）
+  - [x] 今日人品（daily_luck）：随机抽取你的每日幸运值，支持按不同的消息模板返回不同的文案。
   - [ ] 我超，盒！（box）
   - [ ] B 站链接解析（bilibili_link_parser）
   - [x] 赞我（send_like）：让机器人点赞你的资料卡。

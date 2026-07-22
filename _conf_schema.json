@@ -267,6 +267,11 @@
                 "type": "bool",
                 "description": "启用进退群提醒模块",
                 "default": false
+            },
+            "EnableDailyLuck": {
+                "type": "bool",
+                "description": "启用今日人品模块",
+                "default": false
             }
         }
     },
@@ -278,9 +283,15 @@
                 "type": "object",
                 "description": "通用消息",
                 "items": {
+                    "TemplateNotFound": {
+                        "type": "string",
+                        "description": "找不到可用消息模板时发送的消息",
+                        "hint": "可用占位符有 {module_name}（模块名称）、{module_template_name}（模板名称）。",
+                        "default": "找不到模块 {module_name} 名为 {module_template_name} 的消息模板，请联系管理员添加相应模板。"
+                    },
                     "UnknownError": {
                         "type": "string",
-                        "description": "发生未知错误时的提示消息",
+                        "description": "发生未知错误时发送的消息",
                         "default": "发生未知错误，请重试。"
                     }
                 }
@@ -546,6 +557,71 @@
                                         "type": "text",
                                         "description": "被踢提醒消息",
                                         "hint": "群成员被管理员踢出群时机器人将发送的提醒信息，可用占位符有：{user_id}（用户 ID）、{user_name}（用户昵称）、{operator_id}（操作者 ID）、{operator_name}（操作者昵称）。"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DailyLuck": {
+                "type": "object",
+                "description": "今日人品",
+                "items": {
+                    "templates": {
+                        "type": "template_list",
+                        "description": "幸运值查询结果文案",
+                        "hint": "支持对不同幸运值范围显示不同的消息，单个幸运值若有多个模板将随机抽取一条使用。",
+                        "templates": {
+                            "FixedValue": {
+                                "name": "固定值",
+                                "hint": "为指定的单个值添加一个消息模板。",
+                                "hide_hint_in_list": true,
+                                "display_item": "Value",
+                                "items": {
+                                    "Value": {
+                                        "type": "int",
+                                        "description": "值",
+                                        "hint": "要添加消息模板的幸运值。",
+                                        "slider": {
+                                            "min": 0,
+                                            "max": 100,
+                                            "step": 1
+                                        }
+                                    },
+                                    "Message": {
+                                        "type": "text",
+                                        "description": "消息内容",
+                                        "hint": "可用占位符有 {user_name}（用户昵称），{user_id}（用户 ID），{value}（幸运值）。"
+                                    }
+                                }
+                            },
+                            "SpecifiedRange": {
+                                "name": "指定范围",
+                                "hint": "为指定范围添加一个消息模板。",
+                                "items": {
+                                    "RangeStart": {
+                                        "type": "int",
+                                        "description": "范围起始值",
+                                        "slider": {
+                                            "min": 0,
+                                            "max": 99,
+                                            "step": 1
+                                        }
+                                    },
+                                    "RangeEnd": {
+                                        "type": "int",
+                                        "description": "范围结束值",
+                                        "slider": {
+                                            "min": 1,
+                                            "max": 100,
+                                            "step": 1
+                                        }
+                                    },
+                                    "Message": {
+                                        "type": "text",
+                                        "description": "消息内容",
+                                        "hint": "可用占位符有 {user_name}（用户昵称），{user_id}（用户 ID），{value}（幸运值）。"
                                     }
                                 }
                             }

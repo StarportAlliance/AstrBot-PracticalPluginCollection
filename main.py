@@ -188,3 +188,13 @@ class PracticalPluginCollection(Star):
         result = await self.global_entry.welcome_goodbye.handle_event(event)
         if result:
             yield result
+
+    @filter.platform_adapter_type(filter.PlatformAdapterType.AIOCQHTTP)
+    @filter.command("luck")
+    async def daily_luck(self, event: AstrMessageEvent):
+        """测测今日幸运值。"""
+        if not self._event_filter(event):
+            return
+        if not self.module_config["EnableDailyLuck"]:
+            return
+        yield await self.global_entry.daily_luck.extract(event)
