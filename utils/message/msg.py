@@ -22,6 +22,8 @@ class MessageTemplate:
     ) -> str:
         """获取消息模板。
 
+        该方法仅支持 `{"str": "str"}` 格式的消息模版类型。
+
         Args:
             template_module (str): 消息模板模块，即消息模板是在哪个模块定义的。
             template_name (str): 消息模板名称。
