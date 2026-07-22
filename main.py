@@ -15,7 +15,7 @@ class PracticalPluginCollection(Star):
         """插件配置。"""
         self.module_config = cast(dict, self.config["ModuleConfig"])
         """插件模块配置。"""
-        self.plugin_data_path = StarTools.get_data_dir()
+        self.plugin_data_path = StarTools.get_data_dir(self.name)
         """插件数据目录。"""
 
     # 这是一个 TODO，计划中会使用该方法去创建定时任务。
