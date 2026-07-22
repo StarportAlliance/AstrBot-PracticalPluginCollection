@@ -32,6 +32,7 @@ PracticalPluginCollection 是 [AstrBot](https://github.com/AstrBotDevs/AstrBot) 
   - [ ] 打劫（robbery）
   - [ ] 猜单词（wordle）
   - [ ] 钓鱼（fish）
+  - [ ] 全服通报（group_notice）
   - And More...
 
 ## 安装
