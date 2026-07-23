@@ -620,7 +620,8 @@
                                             "min": 1,
                                             "max": 100,
                                             "step": 1
-                                        }
+                                        },
+                                        "default": 100
                                     },
                                     "Message": {
                                         "type": "text",
